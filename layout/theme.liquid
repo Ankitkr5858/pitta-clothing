@@ -1,0 +1,270 @@
+<!doctype html>
+  <html class="no-js" lang="{{ shop.locale }}">
+    <head>
+
+          <!-- heatmap.com snippet -->
+          <script>
+            (function() {      
+              var _heatmap_paq = window._heatmap_paq || [];
+              var heatUrl = window.heatUrl = "https://dashboard.heatmap.com/";
+              function heatLoader(url, item) {
+                if(typeof handleSinglePagedWebsite !== 'undefined' && item == 'prep') return true;
+                var s = document.createElement("script"); s.type = "text/javascript"; 
+                s.src = url; s.async = false; s.defer = true; document.head.appendChild(s);
+              }
+              heatLoader(heatUrl+"preprocessor.min.js?sid=2894", "prep");
+              setTimeout(function() {
+                if(typeof _heatmap_paq !== "object" || _heatmap_paq.length == 0) {     
+                  _heatmap_paq.push(["setTrackerUrl", heatUrl+"heatmap.php"]);
+                  heatLoader(heatUrl+"heatmap-light.min.js?sid=2894", "heat");
+                }
+              }, 1000);
+            })();
+          </script>
+          <!-- End heatmap.com snippet Code -->
+      <link rel="preconnect dns-prefetch" href="https://api.config-security.com/" crossorigin>
+      <link rel="preconnect dns-prefetch" href="https://conf.config-security.com/" crossorigin>
+      <link rel="preconnect dns-prefetch" href="https://whale.camera/" crossorigin>
+      <script>
+          /* >> TriplePixel :: start*/
+          window.TriplePixelData = { TripleName: "pittie-clothing-co.myshopify.com", ver: "2.12", plat: "SHOPIFY", isHeadless: false };
+          (function(W, H, A, L, E, _, B, N) {
+              // Functionality unchanged for clarity
+          })("","TriplePixel",localStorage);
+          /* << TriplePixel :: end*/
+      </script>
+      <link rel="preconnect" href="https://triplewhale-pixel.web.app/" crossorigin>
+  
+      <!-- Hotjar Tracking Code for Pittie Clothing -->
+  
+      <!-- Google Tag Manager -->
+      <script async>
+          (function(w, d, s, l, i) {
+              w[l] = w[l] || [];
+              w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+              var f = d.getElementsByTagName(s)[0],
+                  j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+              j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+              f.parentNode.insertBefore(j, f);
+          })(window, document, 'script', 'dataLayer', 'GTM-KLZ8KVNZ');
+      </script>
+      <!-- End Google Tag Manager -->
+  
+      <meta content="p85l3S8Sz66nS8wMuEQEdRxt9AN8q4xEQSSdMqklqUI" name="google-site-verification">
+      <meta name="facebook-domain-verification" content="qq9mcjihizxaym1o79rv9lt7mnmo7x">
+      <meta name="google-site-verification" content="qJR698rfx39-V85-PRKS1zqbfpIsSLl12rhf-OIPiqc">
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <link rel="canonical" href="{{ canonical_url }}">
+  
+      {% if template contains 'customers' %}
+          {{ 'shopify_common.js' | shopify_asset_url | script_tag }}
+          {{ 'customer_area.js' | shopify_asset_url | script_tag }}
+      {% endif %}
+  
+      {%- if settings.favicon != blank -%}
+          <link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
+      {%- endif -%}
+  
+      {%- capture seo_title -%}
+          {%- if request.page_type == 'search' and search.performed == true -%}
+              {{ 'general.search.heading' | t: count: search.results_count }}: {{ 'general.search.results_with_count' | t: terms: search.terms, count: search.results_count }}
+          {%- else -%}
+              {{ page_title }}
+          {%- endif -%}
+          {%- if current_tags -%}
+              {%- assign meta_tags = current_tags | join: ', ' -%} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags -}}
+          {%- endif -%}
+          {%- if current_page != 1 -%}
+              &ndash; {{ 'general.meta.page' | t: page: current_page }}
+          {%- endif -%}
+          {%- assign escaped_page_title = page_title | escape -%}
+          {%- unless escaped_page_title contains shop.name -%}
+              &ndash; {{ shop.name }}
+          {%- endunless -%}
+      {%- endcapture -%}
+      <title>{{ seo_title | strip }}</title>
+  
+      {%- if page_description -%}
+          <meta name="description" content="{{ page_description | escape }}">
+      {%- endif -%}
+  
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.3.2/swiper-bundle.min.css" crossorigin="anonymous">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.3.2/swiper-bundle.min.js" defer></script>
+  
+      <script src="{{ 'pittieClothing-Swiper.js' | asset_url }}" defer></script>
+      {% render 'social-meta-tags' %}
+      {% render 'theme-setup' %}
+      {% render 'theme-setting-vars' %}
+      {{ 'index.css' | asset_url | stylesheet_tag }}
+      {{ 'c-custom.css' | asset_url | stylesheet_tag }}
+      {{ 'new-header.css' | asset_url | stylesheet_tag }}
+      
+      {% if request.page_type == 'collection' %}
+          {% if template.suffix == 'new-collection' or template.suffix == 'new-collection-pjs' %}
+              {{ 'gh-new-collection.css' | asset_url | stylesheet_tag }}
+          {% endif %}
+      {% endif %}
+      
+      {% render 'theme-liquid-css-assets' %}
+      
+{% comment %} remove URLs from asyncLoad {% endcomment %}
+
+{% assign urls_to_remove = '
+    https:\/\/cdn.nfcube.com\/990cf1b9e8fd05e676980ef79bb40bcb.js?shop=pittie-clothing-co.myshopify.com,
+   https:\/\/storage.googleapis.com\/gsf-scripts\/global-remarketing\/pittie-clothing-co.js?1664214142,                     
+    https:\/\/d34uoa9py2cgca.cloudfront.net\/shopify-app\/helper-scripts\/sezzle-footer-logo-fix.js?shop=pittie-clothing-co.myshopify.com,
+    https:\/\/cdn.attn.tv\/pittieclothingco\/dtag.js?shop=pittie-clothing-co.myshopify.com,
+    \/\/loader.wisepops.com\/get-loader.js?v=1\u0026site=SVxdrQoztZ\u0026shop=pittie-clothing-co.myshopify.com,
+    https:\/\/storage.googleapis.com,
+'
+    | strip_newlines
+    | replace: ' ', ''
+    | split: ','
+%}
+
+
+{% for url in urls_to_remove %}
+{% assign content_for_header = content_for_header | remove: url %}
+{% endfor %}
+
+      {{ content_for_header }}
+
+      <script>
+        let scriptUrls = {{ urls_to_remove | json }};
+    
+        const injectScripts = (urls) => {
+    
+          console.log('injectScripts ran');
+          console.log({ scriptUrls });
+    
+          urls.forEach(scriptUrl => {
+    
+            console.log('inside forEach');
+    
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = scriptUrl.replaceAll('\\/', '/').replaceAll('\\u0026', '&');
+    
+            document.head.appendChild(script);
+          });
+    
+          scriptUrls.length = 0;
+        }
+    
+    
+        // Add event listeners for click, scroll, and keydown
+        document.addEventListener('click', () => injectScripts(scriptUrls));
+        window.addEventListener('scroll', () => injectScripts(scriptUrls));
+        document.addEventListener('keydown', () => injectScripts(scriptUrls));
+        
+      </script>
+      <script>
+          window.Shopify = window.Shopify || {theme: {id: {{ theme.id }}, role: '{{ theme.role }}' }};
+          window._template = {
+              directory: "{{ template.directory }}",
+              name: "{{ template.name }}",
+              suffix: "{{ template.suffix }}"
+          }
+      </script>
+      <script src="https://cdn.intelligems.io/1b15c7513df2.js"></script>
+      
+      <script async type="text/javascript">
+          (function(c,l,a,r,i,t,y){
+              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+          })(window, document, "clarity", "script", "ntxdg8xngn");
+      </script>
+  
+      {% render 'gsf-conversion-pixels' %}
+  </head>
+  
+  <body class="template-{{ request.page_type | handle }}{% if settings.uppercase_headings %} g-uppercase{% endif %}" data-zoom-animation-enabled="{{ settings.enable_zoom_on_scroll }}">
+      <!-- Google Tag Manager (noscript) -->
+      <noscript>
+          <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KLZ8KVNZ" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+      </noscript>
+      <!-- End Google Tag Manager (noscript) -->
+  
+      
+      <header class="header-container">
+        {% section 'c-countdown-timer' %}
+          {% section 'announcement-bar-new' %}
+          {% section 'header' %}
+      </header>
+      {% section 'bm-size-chart-popup' %}
+      {%- sections 'overlay-group' -%}
+  
+      {% render 'header-overlay' %}
+  
+      <div class="theme-editor-scroll-offset"></div>
+      {{ content_for_layout }}
+      {% section 'exit-intent' %}
+      {% section 'footer' %}
+      {% render 'cart-drawer' %}
+      {% render 'modal' %}
+      {% render 'store-availability-drawer' %}
+      {% render 'drawer-overlay' %}
+  
+      <script src="{{ 'index.js' | asset_url }}" defer="defer"></script>
+      <script src="https://a.klaviyo.com/media/js/onsite/onsite.js"></script>
+      <script>
+          var klaviyo = klaviyo || [];
+          klaviyo.init({
+            account: "TgTaBU",
+            platform: "shopify"
+          });
+          klaviyo.enable("backinstock",{ 
+          trigger: {
+            product_page_text: "Notify Me When Available",
+            product_page_class: "btn",
+            product_page_text_align: "center",
+            product_page_margin: "50px",
+            alternate_anchor: true
+          },
+          modal: {
+            headline: "{product_name}",
+            body_content: "Register to receive a notification when this item comes back in stock.",
+            email_field_label: "Email",
+            button_label: "NOTIFY ME WHEN AVAILABLE",
+            subscription_success_label: "You're in! We'll let you know when it's back.",
+            footer_content: '',
+            additional_styles: "@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');",
+            drop_background_color: "#000",
+            background_color: "#fff",
+            text_color: "#222",
+            button_text_color: "#fff",
+            button_background_color: "#d81e5b",
+            close_button_color: "#ccc",
+            error_background_color: "#fcd6d7",
+            error_text_color: "#C72E2F",
+            success_background_color: "#d3efcd",
+            success_text_color: "#1B9500",
+            headers_font_family: "@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@900&display=swap');"
+          }
+        });
+      </script>
+      <script src="{{ 'custom.js' | asset_url }}" defer="defer"></script>
+      <script type="text/javascript" src="https://script.crazyegg.com/pages/scripts/0128/2887.js" async="async"></script>
+     
+      
+      {{ 'jquery-2.2.3.min.js' | asset_url | script_tag }}
+     
+      
+      
+      <!-- Defer SpurIT Snippet (Load only on Cart Page) -->
+      {% if template contains 'cart' %}
+        <script defer>
+          {% render 'spurit_sct_theme_snippet' %}
+        </script>
+      {% endif %}            
+      
+      {% include 'judgeme_core' %}
+    
+    
+  </body>
+  </html>
+  

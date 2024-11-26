@@ -1,0 +1,389 @@
+<div class="shop-by-print section">
+    <div class="shop-by-print-inner container">
+      <div class="section_header"><h2 class="main-heading text-block__heading type-heading-1 ma0">{{ section.settings.main_heading }}</h2><div class="sub_copy">{{ section.settings.sub_copy }}</div></div>
+      {%- assign responsive_ = section.settings.responsive | strip_newlines | json | remove: '\t' | remove: '\' | remove: ' '
+        | replace: '"{"','{"' | replace: '}}"','}}' -%}
+         {%- assign items_ = responsive_ | split: '"slidesPerView":' | last | split: ',' | first | plus: 0 -%}
+      <swiper-slider>
+        <div class="swiper shop-by-print-slider swiper-container mySwiper"
+          data-dots="{{section.settings.use_dots}}" 
+          data-nav = "{{section.settings.use_navigation}}"
+          data-prev-el=".sw-btn-prev-{{section.id}}"
+          data-next-el=".sw-btn-next-{{section.id}}" 
+          data-pagination=".swiper-pagination-{{section.id}}"
+          data-breakpoints='{{responsive_}}' 
+          data-thumbs ="{{section.settings.use_thumnails}}"
+          data-thumbs-id = ".swiper-thumbs-{{section.id}}"
+          data-direction = "horizontal"
+          data-autoplay = 'false'
+          data-allow-touch-move = 'true'
+          data-autoplay-delay = '4000'
+        >
+          <!-- Additional required wrapper -->
+          <div class="swiper-wrapper">
+            <!-- Slides -->
+            {% for block in section.blocks %}
+              
+              <div class="swiper-slide slide">
+                <div class="print-items ">
+                  {% if block.settings.print-items-tag != blank %}
+                  <div class="print-items-tag"><span>{{ block.settings.print-items-tag }}</span></div>
+                  {% endif %}
+                   <a href="{{ block.settings.product_link }}">
+                   <img class="print-items-desktop-img" src="{{ block.settings.Print_Items_image | img_url: 'master' }}" alt="">
+                   <img class="print-items-mobile-img" src="{{ block.settings.Print_Items_image_mob | img_url: 'master' }}" alt="">
+                  </a>
+                  <div class="about_print_item">
+                    <h3>{{ block.settings.Print_Items_text }}</h3>
+                    <div class="description">{{ block.settings.Print_Items_description }}</div>
+                  </div>
+                </div>
+              </div>
+              
+            {% endfor %}
+            <!-- Slides -->
+          </div>
+             <div class="swiper-button-prev sw-btn-prev-{{section.id}}">
+               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11 8" fill="currentColor" focusable="false">
+  <path d="M7.2 0l-.7.7 2.6 2.8H0v1h9.2L6.5 7.3l.7.7L11 4 7.2 0z"></path>
+</svg>
+             </div>
+            <div class="swiper-button-next sw-btn-next-{{section.id}}">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11 8" fill="currentColor" focusable="false">
+  <path d="M7.2 0l-.7.7 2.6 2.8H0v1h9.2L6.5 7.3l.7.7L11 4 7.2 0z"></path>
+</svg>
+            </div>
+          <!-- If we need pagination -->
+          <!-- <div class="swiper-pagination swiper-pagination-{{section.id}}"></div> -->
+          <!-- If we need scrollbar -->
+        </div>
+     </swiper-slider>
+    </div>
+  </div>
+
+
+{% schema %}
+{
+  "name": "Shop By Print",
+  "class": "section-trending",
+  "settings":[
+
+       {
+        "id": "main_heading",
+        "type": "text",
+        "label": "Main Heading"
+      },
+         {
+        "id": "sub_copy",
+        "type": "richtext",
+        "label": "Sub Copy"
+      },
+            {
+      "id": "heading_font_size",
+      "type": "range",
+      "label": "Heading Font Size (Desktop)",
+      "default": 18,
+      "min": 12,
+      "max": 48
+    },
+       {
+      "id": "heading_font_size_mob",
+      "type": "range",
+      "label": "Heading Font Size (Mobile)",
+      "default": 16,
+      "min": 12,
+      "max": 48
+    },
+          {
+      "id": "heading_color",
+      "type": "color",
+      "label": "Heading Color"      
+    }, 
+            {
+      "id": "title_font_size",
+      "type": "range",
+      "label": "Text Font Size (Desktop)",
+      "default": 18,
+      "min": 12,
+      "max": 48
+    },
+       {
+      "id": "Print_Items_font_size_mob",
+      "type": "range",
+      "label": "Text Font Size (Mobile)",
+      "default": 16,
+      "min": 12,
+      "max": 36
+    },
+    
+          {
+      "id": "Print_Items_color",
+      "type": "color",
+      "label": " Text Color"      
+    },
+      {
+      "type": "checkbox",
+      "id": "use_navigation",
+      "label": "__Use navigation?",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "use_thumnails",
+      "label": "__Use thumbnails?",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "use_dots",
+      "label": "__Use dots?"
+    },
+    {
+      "type": "textarea",
+      "id": "responsive",
+      "label": "== Responsive",
+      "default": "{\n  \"0\": {\n    \"slidesPerView\": 2.5,\n    \"spaceBetween\": 10\n  },\n  \"1200\": {\n    \"slidesPerView\": 5,\n    \"spaceBetween\": 30\n  }\n}"
+    }
+    
+  ],
+  "blocks": [
+    {
+      "type": "Print_Items",
+      "name": "Print Items",
+      "settings": [
+        {
+          "id": "Print_Items_image",
+          "type": "image_picker",
+          "label": "Print Items Desktop Image"
+        },
+          {
+          "id": "Print_Items_image_mob",
+          "type": "image_picker",
+          "label": "Print Items Mobile Image"
+        },
+        {
+          "id": "Print_Items_text",
+          "type": "text",
+          "label": "Print Items Text"
+        },
+         {
+          "id": "Print_Items_description",
+          "type": "richtext",
+          "label": "Print Items Description"
+        },
+         {
+        "id": "product_link",
+        "type": "url",
+        "label": "Link"
+      }
+        
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop By Print",
+      "category": "Sections"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+ 
+ .shop-by-print-inner .swiper.shop-by-print-slider{
+   padding: 40px 0 0;
+}
+.shop-by-print-inner .print-items-tag {
+    text-align: center;
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    width: 100%;
+  }
+ .shop-by-print-inner .print-items-tag span {
+    color: #FFF;
+    text-align: center;
+    font-family: Montserrat;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 20px; /* 142.857% */
+    text-transform: uppercase;
+    /* position: absolute;
+    left: 50%;
+    top: -15px; */
+    border-radius: 8px;
+    background: var(--brand-2, #59BBE9);
+    padding: 5px 15px;
+    /* transform: translate(-50%, 0); */
+    z-index: 10;
+}
+   
+   .shop-by-print-inner .slide img{
+     width:100%;
+   }
+  .swiper-button-prev 
+  {
+    background:#fff;
+    border: 1px solid #44444424;
+     height:30px;
+  }
+  .swiper-button-next{
+      background:#fff;
+    border: 1px solid #44444424;
+    height:30px;
+  }
+
+ .shop-by-print-inner svg{
+    width:14px;
+   color:#000;
+  }
+
+   .swiper-button-prev:after,
+   .swiper-button-next:after{
+     display:none;
+   }
+  .shop-by-print-inner h2{
+    text-align:center;
+    padding-bottom:8px !important;
+  }
+  .shop-by-print{
+    padding-top:40px;
+    padding-bottom:60px;
+    padding-right: 0;
+  }
+
+
+
+  .shop-by-print-inner .swiper-button-prev svg{
+   transform: rotate(180deg);
+  }
+
+    .print-items-desktop-img{
+      display:block;
+    }
+     .print-items-mobile-img{
+       display:none;
+     } 
+   .shop-by-print-inner .swiper-button-prev,
+   .shop-by-print-inner .swiper-button-next
+   {
+       display:flex;
+     }
+.section_header .sub_copy p {
+    color: var(--brand-3, #13294B);
+    text-align: center;
+    font-family: Montserrat;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0.36px;
+    max-width: 900px;
+    margin: auto;
+}
+  .about_print_item h3 {
+    color: #142A4A;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    font-family: 'Roboto Slab';
+    margin: 12px 0 4px;
+    text-align: center;
+}
+  .about_print_item{
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .about_print_item .description p {
+    color: var(--brand-3, #13294B);
+    font-family: Montserrat;
+    font-size: 11px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.22px;
+    margin: 0;
+    text-align: center;
+}
+
+  @media(max-width:767px){
+
+html body .shop-by-print-inner .swiper.shop-by-print-slider {
+    padding-top: 24px;
+}
+ html body .shop-by-print.section h2 {
+    font-size: 32px;
+}
+html body .shop-by-print.section .section_header .sub_copy p {
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: 0.28px;
+}
+html body .about_print_item h3 {
+    font-size: 14px;
+    line-height: 100%;
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+html body .about_print_item .description p {
+    font-size: 8px;
+    line-height: 12px;
+}
+    .shop-by-print.section .section_header {
+    padding-right: 15px;
+}
+
+    html body .shop-by-print {
+      padding-top:30px !important;
+      padding-right: 0;
+      padding-bottom: 30px !important;
+      padding-left: 15px !important;
+    }
+    /* .shop-by-print-inner .swiper.shop-by-print-slider [aria-label="3 / 3"]{
+      margin-top:-5px;
+    } */
+    .shop-by-print-inner h2{
+      padding-bottom:4px !important;
+    }
+    .shop-by-print-inner .print-items-tag span {
+    color: #FFF;
+    text-align: center;
+    font-family: Montserrat;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 20px; /* 181.818% */
+    text-transform: uppercase;
+ }
+   
+  }
+
+    /* .shop-by-print-inner .print-items img {
+      border-radius: 8px;
+  } */
+  .shop-by-print .swiper-slide {
+      height: auto;
+  }
+  @media(max-width:991px){
+        .shop-by-print-inner .swiper-button-prev,
+   .shop-by-print-inner .swiper-button-next
+   {
+       display:flex;
+     }
+
+    .print-items-desktop-img{
+      display:none;
+    }
+     .print-items-mobile-img{
+       display:block;
+     }
+
+   }
+
+ {% endstylesheet %} 
+

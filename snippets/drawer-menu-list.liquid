@@ -1,0 +1,78 @@
+ 
+
+
+{%- for link in links -%}
+  {%- assign has_children = false -%}
+  {%- if link.levels > 0 -%}
+    {%- assign has_children = true -%}
+  {%- endif -%}
+
+  {%- for childlink in link.links -%}
+  {%- assign has_grandchildren = false -%}
+  {%- if childlink.links.size > 0 -%}
+    {%- assign has_grandchildren = true -%}
+  {%- endif -%}
+  {% endfor %}
+
+<li class="menu-{{ depth }} menu-{{ depth }}-{% if has_children %}parent{% else %}link{% endif %} menu-title-{{ link.title | handleize }} {{ fotloop.index }} drawer-menu__item-new {% if link.title contains 'For Dogs' or link.title contains 'For Humans' %} header-item {% endif %} {% if link.title contains 'Shop by Print' %} shop-by-print-mob {% endif %}" data-list-item>
+    <a
+      data-item="{% if has_children %}parent{% else %}link{% endif %}"
+      class="menu-{{ depth }}-{% if has_children %}parent{% else %}link{% endif %}  drawer-menu__link-new {% if has_children %}no-transition{% endif %}"
+      href="{{ link.url }}"
+      {% if has_children %}
+        data-link="primary"
+      {% endif %}
+    >
+
+   <!-- for main title of mobile menu -->
+{%  assign img_url = link.title | split:'|' %}
+
+{% if img_url.size > 1 %}
+  {%  assign nav_title =img_url[0] | split:'**' %} 
+          {%  if link.title contains '**' %} 
+          <h3 class="submenu-title">{{ nav_title[0] }} </h3>
+          <span class="submenu-subtitle">{{ nav_title[1] }} </span>
+          {% else %}
+             {{ img_url[0] }} 
+          {% endif %}
+{% else %}
+  <span class="header-item">{{ img_url[0] }}</span>
+{% endif %}
+
+      
+      {%- if has_children -%}
+        {% render 'icon-chevron-right' %}
+      {%- endif -%}     
+    </a>
+
+ <!-- for image of mobile menu  -->
+      {%  if link.title contains 'https://' or link.title contains 'http://'  %}  
+   <a href="{{link.url}}">
+            <div class="menu-image">  
+              
+            <img src="{{ img_url[1] }}">
+         
+                      
+            </div>   
+        </a>
+           {% endif %}
+
+    {% comment %} Render sub navigation {% endcomment %}
+    {%- if link.links.size > 0 -%}
+      <ul class="drawer-menu__list-new drawer-menu__list--sub-new {% if has_grandchildren %}has-grandchild{% endif %}" data-height-reference>
+
+        <div class="drawer-wrapper-new  {% if link.title contains ' Size Charts'  %} header-item-wrapper-new {% endif %} ">
+        {% render 'drawer-menu-list', links: link.links %}
+
+          {%  if link.title contains 'https://' or link.title contains 'http://'  %}  
+            <div class="menu-image">
+            <a href="{{link.url}}">
+            <img src="{{ img_url[1] }}">
+            </a>
+            </div>        
+           {% endif %}
+        </div>
+      </ul>
+    {%- endif -%}
+  </li>
+{%- endfor -%}

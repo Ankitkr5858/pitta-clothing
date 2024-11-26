@@ -1,0 +1,31 @@
+{% liquid
+  assign time_in_ms = timer | times: 1000
+%}
+
+<section
+  data-section-id="{{ section.id }}"
+  data-section-type="slideshow"
+  class="slideshow slideshow--{{ aspect_ratio }}"
+  data-timer="{{ time_in_ms }}"
+  data-slide-count={{ slides.size }}
+>
+  <div class="js-slideshow">
+    {% if slides.size == 2 %}
+      {% for i in (1..2) %}
+        {% render 'slideshow-blocks' with
+          id: id,
+          blocks: slides,
+          aspect_ratio: aspect_ratio
+        %}
+      {% endfor %}
+    {% else %}
+      {% render 'slideshow-blocks' with
+        id: id,
+        blocks: slides
+        aspect_ratio: aspect_ratio
+      %}
+    {% endif %}
+  </div>
+
+  {% render 'page-dots', blocks: slides %}
+</section>

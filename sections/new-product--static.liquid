@@ -1,0 +1,303 @@
+{% render 'new-pages--product' with
+  show_thumbnails: section.settings.show_thumbnails,
+  thumbnail_position: section.settings.thumbnail_position,
+  thumbnail_size: section.settings.thumbnail_size,
+  enable_full_width: section.settings.enable_full_width,
+  show_vendor: section.settings.show_vendor,
+  show_swatches: section.settings.show_swatches,
+  show_quantity_input: section.settings.show_quantity_input,
+  show_share_buttons: section.settings.show_share_buttons,
+  enable_payment_button: section.settings.enable_payment_button,
+  enable_video_looping: section.settings.enable_video_looping,
+  pdp-matching-product-heading: section.settings.pdp-matching-product-heading,
+%}
+
+{% schema %}
+  {
+    "name": "Product pages",
+    "settings": [
+      {
+        "id": "pdp-matching-product-heading",
+        "type": "text",
+        "label": "PDP Matching Product Heading",
+        "default": "Get the matching set!"
+      },
+      {
+        "id": "enable_full_width",
+        "type": "checkbox",
+        "label": "Enable full width",
+        "info": "If enabled this page will span the entire width of the window",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_thumbnails",
+        "label": "Show image thumbnails",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "thumbnail_position",
+        "label": "Thumbnail position",
+        "default": "vertical",
+        "options": [
+          {
+            "value": "vertical",
+            "label": "Beside product image"
+          },
+          {
+            "value": "horizontal",
+            "label": "Below product image"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "thumbnail_size",
+        "label": "Thumbnail size",
+        "default": "large",
+        "options": [
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "large",
+            "label": "Large"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "label": "Show vendor",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_swatches",
+        "label": "Show swatches",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_share_buttons",
+        "label": "Show social sharing buttons"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_quantity_input",
+        "label": "Show quantity selector",
+        "info": "If quantity selector is hidden, quantities will default to 1.",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_payment_button",
+        "label": "Show dynamic checkout button",
+        "info": "Lets customers check out directly using a familiar payment method. [Learn more](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Media"
+      },
+      {
+        "type": "paragraph",
+        "content": "Learn more about [media types](https://help.shopify.com/en/manual/products/product-media)"
+      },
+      {
+        "id": "enable_video_looping",
+        "type": "checkbox",
+        "label": "Enable video looping",
+        "default": true
+      }
+    ]
+  }
+{% endschema %}
+
+<script>
+
+           function showmodal(){
+              var crossmodal = document.querySelector('.modal-close');
+              var overlay = document.querySelector('.modal-overlay');
+             
+              // open modal
+              var popup = document.querySelectorAll('a.bm-size-chart');
+               Array.from(popup).forEach(function(showContent){
+               showContent.addEventListener("click", function(e){
+                e.preventDefault();
+                document.body && document.body.classList.add('bm-show-modal')
+              });
+             });
+                // close modal
+              if(crossmodal){
+                crossmodal.addEventListener("click", function(){
+                document.body && document.body.classList.remove('bm-show-modal')
+              })
+            }
+          if(overlay){
+            overlay.addEventListener("click", function(){
+            document.body && document.body.classList.remove('bm-show-modal')
+            })
+          }
+        }
+      showmodal();
+  
+</script>
+<script>
+
+  var bmVariants = document.querySelectorAll('.pdp-matching-product-details .product-form__controls-group .product-form__chip');
+  var bmAddToCartButton = document.querySelector('.pdp-matching-product-details .add_to_cart');
+  var bmErrorPossition = document.querySelector('.pdp-matching-product-details .product-form__chip-wrapper');
+
+  // Function to create and insert the error message element
+  function createErrorMessage() {
+    var errorContainer = document.createElement('div');
+    errorContainer.id = 'error-message'; // Set the ID for the error container
+    errorContainer.textContent = 'PLEASE CHOOSE SIZE';
+    var parent = bmErrorPossition.parentNode;
+    parent.insertBefore(errorContainer, bmErrorPossition.nextSibling);
+  }
+
+  // Initialize a flag to track whether any variant is clicked
+  var isVariantClicked = false;
+
+    bmVariants.forEach(function (v) {
+        v.classList.remove('variant_selected');
+        v.querySelector('input').checked=false;
+      });
+      
+  console.log("bmVariants length", bmVariants.length);
+    if (bmVariants.length === 0) {
+      
+    }
+
+  // Add a click event listener to each variant
+  bmVariants.forEach(function (variant) {
+
+    console.log("var", variant);
+
+    variant.addEventListener('click', function () {
+      isVariantClicked = true;
+      enableAddToCart();
+      
+      // Remove the "variant_selected" class from all bmVariants
+      bmVariants.forEach(function (v) {
+        v.classList.remove('variant_selected');
+      });
+      
+      // Add the "variant_selected" class to the clicked variant
+      variant.classList.add('variant_selected');
+    });
+  });
+
+  // Function to enable the "Add to Cart" button and clear the error message
+  function enableAddToCart() {
+    bmAddToCartButton.disabled = false;
+    var errorContainer = document.getElementById('error-message');
+    if (errorContainer) {
+      bmErrorPossition.classList.remove('size_error_message');
+      errorContainer.remove(); // Remove the error message if it exists
+    }
+  }
+
+  // Function to disable the "Add to Cart" button and display an error message
+  function disableAddToCart() {
+    bmAddToCartButton.disabled = true;
+    if (!document.getElementById('error-message')) {
+      bmErrorPossition.classList.add('size_error_message');
+      createErrorMessage(); // Create and insert the error message if it doesn't exist
+    }
+  }
+
+  // Function to add a class to the variant based on the URL parameter
+  function addClassToVariantFromURL() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var variantParam = urlParams.get('variant');
+    
+    if (variantParam) {
+      var variantElement = document.getElementById(variantParam);
+      if (variantElement) {
+        variantElement.classList.add('variant_selected');
+      }
+    }
+  }
+  
+  // Call the function to add the class based on the URL parameter
+  addClassToVariantFromURL();
+
+  // Add a click event listener to the "Add to Cart" button
+  bmAddToCartButton.addEventListener('click', function () {
+    if (!isVariantClicked) {
+      disableAddToCart();
+    } else {
+      // Add code to handle adding the product to the cart
+      // You can add this logic here
+    }
+  });
+</script>
+<style>
+  .product__meta .product__header {
+      margin-bottom: 0px;
+  }
+
+  .bm-product-size.mb3 {
+      margin-top: 20px;
+      margin-bottom:11px;
+      display: flex;
+      align-items:  center;
+      justify-content: space-between;
+      /* 128.571% */
+      color: #909090;
+      font-family: Montserrat;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 100%; /* 16px */
+    
+  }
+  
+  .bm-product-size .bm-size-chart {
+      color: #13294B;
+      font-family: Montserrat;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 18px; /* 128.571% */
+      text-decoration-line: underline;
+      text-transform: uppercase;
+    display: flex;
+      align-items: center;
+      gap: 5px;
+    cursor:pointer; 
+  }
+
+    .product-form__chip-wrapper.size_error_message {
+      border: 1px solid var(--utility-red, #E60000);
+      padding: 3px;
+      gap: 6px;
+  }
+  .product-form__chip-wrapper.size_error_message .product-form__chip {
+      margin: 0;
+  }
+    div#error-message {
+      color: var(--utility-red, #E60000);
+      font-family: Montserrat;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 16px;
+      margin-top: 16px;
+      margin-bottom: 24px;
+  }
+
+  .product-form__chip-selected{
+    display:none;
+  }
+  
+</style>

@@ -1,0 +1,72 @@
+<section class="section text-columns text-columns--alignment-center collection-list-grid--columns-3 in-view">
+<div class="text-block text-columns__intro animation__staggered-children-fade-in text-block--center">
+
+   
+     <h2 class="text-block__heading type-heading-1 ma0 columns">{{ section.settings.headline}}</h2>
+      
+      {% for block in section.blocks %}
+      <div class="cols">
+      <img src="{{ block.settings.image | img_url: 'master' }}">
+      <div>{{ block.settings.text}}</div>
+      </div>
+      {% endfor %}
+     {% if section.settings.btn_url  != blank %}
+      <a href="{{ section.settings.btn_url }}" class="text-block__button bttn bttn--secondary bttn--inline mt4">{{ section.settings.btn_text }}</a>
+     {% endif %}
+    </div>
+ 
+</section>
+
+{% schema %}
+  {
+    "name": "3 Columns",
+    "class": "home-new",
+    "settings": [
+	{
+      "type": "text",
+      "id": "headline",
+      "label": "Headline"
+	},
+	{
+      "type": "text",
+      "id": "btn_text",
+      "label": "Button Text"
+	},
+	{
+      "type": "url",
+      "id": "btn_url",
+      "label": "Button URL"
+	}
+],
+
+ "blocks": [
+    {
+      "type": "select",
+      "name": "Add Row",
+      "settings": [
+        {
+          "id": "image",
+          "type": "image_picker", 
+       	  "label": "Image"
+        },
+        {
+          "id": "text",
+          "type": "richtext",
+          "label": "Text"
+        }
+      ]
+    }
+  ],
+    "presets": [
+    {
+      "name": "3 Columns"
+    }
+  ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

@@ -1,0 +1,62 @@
+{% capture settings %}
+  {
+    "limit": {{ settings.search_max_result_size | json }},
+    "show_articles": {{ settings.search_show_articles | json }},
+    "show_pages": {{ settings.search_show_pages | json }},
+    "show_products": {{ settings.search_show_products | json }},
+    "show_price": {{ settings.search_show_price | json }},
+    "show_vendor": {{ settings.search_show_vendor | json }}
+  }
+{% endcapture %}
+
+<div class="quick-search">
+  <script type="application/json" data-settings>{{ settings }}</script>
+
+  <a href="#" class="color-inherit no-ajax quick-search__trigger">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_3621_216)">
+<path d="M10 19C14.9706 19 19 14.9706 19 10C19 5.02944 14.9706 1 10 1C5.02944 1 1 5.02944 1 10C1 14.9706 5.02944 19 10 19Z" stroke="#13294B" stroke-width="1.4" stroke-miterlimit="10"/>
+<path d="M16 16L23 23" stroke="#13294B" stroke-width="1.4" stroke-miterlimit="10"/>
+</g>
+<defs>
+<clipPath id="clip0_3621_216">
+<rect width="24" height="24" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+  </a>
+
+  <div class="search hidden">
+    <div class="search__container">
+      <form action="{{ routes.search_url }}" class="search__input-container" autocomplete="off">
+        <input
+          autofocus
+          type="search"
+          name="q"
+          class="search__input"
+          placeholder="{{ 'search.placeholder' | t }}"
+        />
+
+        <div class="search__input-actions">
+          <a href="#" class="search__input-clear accent underline">
+            {{ 'search.clear' | t }}
+          </a>
+          <button
+            type="submit"
+            class="search__submit-button"
+          >
+            {% render 'icon-arrow-forward' %}
+          </button>
+
+          <a href="#" class="search__input-close">
+            {% render 'icon-close' %}
+          </a>
+        </div>
+
+        <div class="search__results"></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="search__overlay"></div>
+</div>

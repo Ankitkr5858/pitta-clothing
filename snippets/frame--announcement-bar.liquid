@@ -1,0 +1,79 @@
+{% assign timing_in_ms = announcement_bar_timing | times: 1000 %}
+<section
+  class="announcement-bar-wrapper"
+  data-section-id="{{ id }}"
+  data-section-type="announcement-bar"
+  data-timing="{{ timing_in_ms }}"
+>
+  {% if announcement_bar_enabled %}
+    {% for block in blocks %}
+      <div
+        class="announcement-bar flex items-center justify-center"
+        style="
+          background-color: {{ block.settings.background_color }};
+          color: {{ block.settings.text_color }};
+        "
+        data-index="{{ forloop.index0 }}"
+        {{ block.shopify_attributes }}
+      >
+        <div class="announcement-bar__content">
+          {%- if section.settings.announcement_bar_social -%}
+          <div class="anouncement-social">
+            {%- assign social_icons_in_use = false -%}
+      
+            {%- assign social_accounts = 'Facebook, Twitter, Pinterest, Instagram, Snapchat, Tumblr, YouTube, Vimeo,' | split: ', ' -%}
+            {%- for social in social_accounts -%}
+              {%- assign social_handle = social | handleize -%}
+              {% capture social_link %}social_{{ social_handle }}_link{% endcapture %}
+              {%- if settings[social_link] != blank -%}
+                {%- assign social_icons_in_use = true -%}
+              {%- endif -%}
+            {%- endfor -%}
+      
+      
+            {%- if social_icons_in_use -%}
+              <div class="footer__social-icons">
+                {%- render 'social-icons' -%}
+              </div>
+            {%- endif -%}
+          </div>
+          {%- endif -%}
+          {%- if block.settings.link != blank -%}
+            <a class="color-inherit" href="{{ block.settings.link }}">
+              {{ block.settings.text | escape }}
+            </a>
+          {%- else -%}
+            {{ block.settings.text | escape }}
+          {%- endif -%}
+        </div>
+      </div>
+    {% endfor %}
+  {% endif %}
+</section>
+
+
+
+<script>
+  (function() {
+    function waitForjQuery(trigger, delayInterval, delayTimeout) {
+      var intervalForjQuery = setInterval(function() {
+        if (typeof window.jQuery != 'undefined') {
+          clearInterval(intervalForjQuery);
+          trigger();
+        }
+      }, delayInterval);
+      var timeoutForjQuery = setTimeout(function() {
+        clearInterval(intervalForjQuery);
+      }, delayTimeout);
+    }
+
+    waitForjQuery(function() {
+      var $ = window.jQuery;
+      $(document).ready(function() {
+
+       // $(".anouncement-currency").append($(".header__icon-list"));
+
+      });
+    }, 50, 10000);
+  })();
+</script>

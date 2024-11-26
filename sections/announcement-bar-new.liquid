@@ -1,0 +1,251 @@
+<style>
+    #section-{{ section.id }} {
+      background: {{ section.settings.background }};
+      color: {{ section.settings.text_color }};
+    }
+
+    .new-announcement-bar_sec{
+      background: {{ section.settings.background }};
+      color: {{ section.settings.text_color }};
+    }
+
+    .AnnouncementBar .money {
+      visibility: visible !important;
+    }
+
+    /* .new-announcement-bar{
+      position: relative;
+    } */
+
+    .new-announcement-bar .swiper-button-next:after,
+    .new-announcement-bar .swiper-button-prev:after{
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .new-announcement-bar a,
+    .new-announcement-bar .AnnouncementBar__Content{
+         font-size: 20px;
+       font-weight: 700;
+    }
+   .AnnouncementBar__Content.Heading {
+      font-family: Montserrat;
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 24px;
+      padding-left: 12px;
+      padding-right: 12px;
+      margin-top: 12px;
+      margin-bottom: 12px;
+  }
+  .AnnouncementBar__Content.Heading {
+      text-align: center;
+  }
+    .new-announcement-bar .swiper .swiper-wrapper {
+      align-items: center;
+   }
+
+   .AnnouncementBar__Wrapper {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+   }
+
+   .c-announcement-bar-icon {
+    width: 28px;
+    height: 28px;
+   }
+
+   .c-announcement-bar-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+   }
+
+    @media (max-width: 767px) {
+      .AnnouncementBar__Content.Heading {
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 24px;
+  }
+      .new-announcement-bar a, .new-announcement-bar .AnnouncementBar__Content{
+        font-size: 16px;
+      font-weight: 700;
+      line-height: 24px;
+      letter-spacing: 0em;
+      text-align: center;
+      }
+    }
+</style>
+
+{%- if section.settings.enable_bar -%}
+  {%- unless section.settings.home_page_only and template != 'index' -%}
+    <section
+      id="section-announcement-new"
+      data-section-id="{{ section.id }}"
+      data-section-type="announcement-bar-new"
+      class="new-announcement-bar_sec"
+    >
+      <div class="AnnouncementBar new-announcement-bar">
+        <swiper-slider>
+          <div
+            class="swiper swiper-container"
+            data-dots="{{section.settings.use_dots}}"
+            data-nav="{{section.settings.use_navigation}}"
+            data-prev-el=".swiper-button-prev-{{section.id}}"
+            data-next-el=".swiper-button-next-{{section.id}}"
+            data-autoplay="{{section.settings.use_animation }}"
+            data-delay="4000"
+            data-loop="true"
+            data-disable-on-interaction="false"
+          >
+            <!-- Additional required wrapper -->
+            <div class="swiper-wrapper">
+              {% for block in section.blocks %}
+                {%- if block.settings.link -%}
+                  <a class="c-announcement-bar-wrapper" href="{{ block.settings.link }}">
+                {% endif %}
+                <div class="AnnouncementBar__Wrapper swiper-slide">
+                  {% if block.settings.icon %}
+                    {{-
+                      block.settings.icon
+                      | image_url: width: 500
+                      | image_tag: loading: 'lazy', height: 'auto', class: 'c-announcement-bar-icon'
+                    -}}
+                  {% endif %}
+
+                  <p class="AnnouncementBar__Content Heading">
+                    {%- if block.settings.link -%}
+                      {{ block.settings.content | escape }}
+                    {%- else -%}
+                      <span>{{ block.settings.content | escape }}</span>
+                    {%- endif -%}
+                  </p>
+                </div>
+                {%- if block.settings.link -%}
+                  </a>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+
+          {% if section.settings.use_navigation %}
+            <div class="swiper-button-prev swiper-button-prev-{{section.id}}"></div>
+            <div class="swiper-button-next swiper-button-next-{{section.id}}"></div>
+          {% endif %}
+        </swiper-slider>
+      </div>
+    </section>
+
+    <script>
+      var announceHeight = document.getElementById('section-announcement-new').offsetHeight;
+      if (announceHeight > 10) {
+        announceHeight = announceHeight - 10;
+      }
+      document.documentElement.style.setProperty('--announcement-bar-height', announceHeight + 'px');
+
+      // Wiat for element
+      function waitForElement(selector, trigger) {
+        var interval = setInterval(function () {
+          if (document && document.querySelector(selector) && document.querySelectorAll(selector).length > 0) {
+            clearInterval(interval);
+            trigger();
+          }
+        }, 50);
+        setTimeout(function () {
+          clearInterval(interval);
+        }, 15000);
+      }
+
+      // Start autoplay
+      waitForElement('.AnnouncementBar .swiper-container.swiper-initialized', function () {
+        var swiper = document.querySelector('.AnnouncementBar .swiper-container');
+        swiper.swiper.autoplay.start();
+      });
+    </script>
+  {%- endunless -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Announcement bar new",
+  "class": "announcement-bar-new-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_bar",
+      "label": "Enable bar",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "home_page_only",
+      "label": "Home page only",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Promo settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_navigation",
+      "label": "__Use navigation?",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "use_animation",
+      "label": "__Use rotation?",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "promo",
+      "name": "Promo Bar",
+      "settings": [
+        {
+          "type": "text",
+          "id": "content",
+          "label": "Text",
+          "default": "Announce something here"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement bar new",
+      "settings": {},
+      "blocks": []
+    }
+  ]
+}
+{% endschema %}

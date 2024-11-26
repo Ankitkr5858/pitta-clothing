@@ -1,0 +1,337 @@
+{% liquid
+  assign id = section.id
+  assign section_color = section.settings.bg_color
+  assign section_style = section.settings.section_style
+  assign columns = section.settings.columns
+  assign text_alignment = section.settings.text_alignment
+  assign text_max_width = section.settings.text_max_width
+  assign overline = section.settings.overline
+  assign heading = section.settings.title
+  assign subheading = section.settings.subheading
+  assign link = section.settings.link
+  assign link_text = section.settings.link_text
+  assign bg_columns = section.settings.bg_columns
+  assign full_width_images = section.settings.full_width_images
+  assign blocks = section.blocks
+%}
+
+{% assign modifiers = '' %}
+{% assign modifiers = modifiers | append: ' section--' | append: section_style %}
+{% unless section_style == 'contrast' %}
+  {% assign modifiers = modifiers | append: ' section--bordered' %}
+{% endunless %}
+{% assign modifiers = modifiers | append: ' text-columns--alignment-' | append: text_alignment  %}
+{% assign modifiers = modifiers | append: ' collection-list-grid--columns-' | append: columns  %}
+{% assign item_width = '' %}
+
+{%- case columns -%}
+  {%- when 1 -%}
+    {%- assign item_width = 'full' -%}
+  {%- when 2 -%}
+    {%- assign item_width = 'one-half' -%}
+  {%- when 3 -%}
+    {%- assign item_width = 'one-third' -%}
+  {%- when 4 -%}
+    {%- assign item_width = 'one-quarter' -%}
+{%- endcase -%}
+
+<section data-section-id="{{ id }}" data-section-type="text-columns-with-images" class="section text-columns{{ modifiers }}" style="background:{{ section_color }};">
+  <div class="product-page-wrapper">
+    <div class="product-page-wrapper__inner" style="min-height:unset;">
+      {% render 'text-block' with
+        id: id,
+        modifiers: 'text-columns__intro animation__staggered-children-fade-in',
+        heading_alignment: text_alignment,
+        text_max_width: text_max_width,
+        overline: overline,
+        heading: heading,
+        text_max_width: text_max_width,
+        subheading: subheading,
+        link: link,
+        link_text: link_text
+      %}
+
+      <div class="text-columns__content grid-display grid-display--{{ item_width }}">
+        {% for block in blocks %}
+          <div class="text-columns__feature animates {% if section.settings.full_width_images != blank %}full_width_images{% endif %}" style="background:{{ bg_columns }};">
+            {%- if block.settings.image != blank -%}
+              {% if block.settings.link != blank %}
+                <a href="{{ block.settings.link }}" class="mb3 w-100 text-columns__image db" style="max-width: {{ block.settings.image_max_width }}%;">
+              {% else %}
+                <div class="mb3 w-100 text-columns__image db" style="max-width: {{ block.settings.image_max_width }}%;">
+              {% endif %}
+
+              {% render 'image' with image: block.settings.image %}
+
+              {% if block.settings.link != blank %}
+                </a>
+              {% else %}
+                </div>
+              {%- endif -%}
+            {%- endif -%}
+            
+              {%- if block.settings.pre_heading != blank -%}
+              <h4 >
+                {{ block.settings.pre_heading }}</h4>
+            {%- endif -%}
+            
+            {%- if block.settings.title != blank -%}
+              <h3
+                class="type-heading-1-small mb3 mt0"
+                data-theme-editor-setting="section.{{ id }}.block.{{ block.id }}.title"
+                style="max-width: {{ block.settings.text_max_width }}em;"
+              >
+                {{ block.settings.title }}</h3>
+            {%- endif -%}
+            {%- if block.settings.subheading != blank -%}
+              <p
+                class="type-body-regular mt0 mb0"
+                data-theme-editor-setting="section.{{ id }}.block.{{ block.id }}.subheading"
+                style="max-width: {{ block.settings.text_max_width }}em;"
+              >
+                {{ block.settings.subheading }}
+              </p>
+            {%- endif -%}
+            {%- if block.settings.link != blank and block.settings.link_text != blank -%}
+              <a
+                href="{{ block.settings.link }}"
+                class="bttn bttn--secondary bttn--inline mt4"
+                data-theme-editor-setting="section.{{ id }}.block.{{ block.id }}.link_text"
+              >
+                {{ block.settings.link_text }}
+              </a>
+            {%- endif -%}
+          </div>
+        {% endfor %}
+      </div>
+        
+      {% if section.settings.link_text_below != blank %}
+        <div class="text-block--center">
+          <a
+            href="{{ section.settings.link_below }}"
+            class="text-block__button bttn bttn--secondary bttn--inline mt4 "
+            data-theme-editor-setting="section.{{ id }}.link_text">{{ section.settings.link_text_below }}
+          </a>
+
+        {% elsif show_placeholder_link %}
+          <a class="text-block__button bttn bttn--secondary bttn--inline mt4">
+            {{ link_text_below }}
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+
+{% schema %}
+  {
+    "name": "Text columns with images",
+    "class": "section-dynamic section-borderable columns",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Section style"
+      },
+      {
+        "type": "color",
+        "id": "bg_color",
+        "label": "Section Color"
+      },
+      {
+        "type": "select",
+        "id": "section_style",
+        "label": "Style",
+        "default": "default",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "contrast",
+            "label": "Contrast"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Section content"
+      },
+      {
+        "type": "range",
+        "id": "columns",
+        "label": "Columns",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "default": 3
+      },
+      {
+        "type": "text",
+        "id": "overline",
+        "label": "Small heading",
+        "default": "Text columns with images"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Text columns with images section"
+      },
+      {
+        "type": "textarea",
+        "id": "subheading",
+        "label": "Subheading",
+        "default": "This section is designed for steps or policies. Tell your brand's story, describe how a product is made, or outline shipping stages."
+      },
+      {
+        "type": "url",
+        "id": "link",
+        "label": "Link"
+      },
+      {
+        "type": "text",
+        "id": "link_text",
+        "label": "Button above column"
+      },
+      {
+        "type": "url",
+        "id": "link_below",
+        "label": "Link"
+      },
+      {
+        "type": "text",
+        "id": "link_text_below",
+        "label": "Button below column"
+      },
+      {
+        "type": "select",
+        "id": "text_alignment",
+        "label": "Text alignment",
+        "default": "center",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Center"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "text_max_width",
+        "label": "Max width of text",
+        "min": 16,
+        "max": 50,
+        "step": 1,
+        "default": 36
+      },
+      {
+        "type": "color",
+        "id": "bg_columns",
+        "label": "Columns Color"
+      },
+      {
+        "type": "checkbox",
+        "id": "full_width_images",
+        "label": "Full width images in columns"
+      }
+    ],
+    "max_blocks": 8,
+    "blocks": [
+      {
+        "type": "column",
+        "name": "Column",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+          },
+          {
+            "type": "range",
+            "id": "image_max_width",
+            "label": "Max image width",
+            "min": 10,
+            "max": 100,
+            "step": 10,
+            "default": 50
+          },
+          {
+            "type": "text",
+            "id": "pre_heading",
+            "label": "Preheading"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Heading",
+            "default": "Column heading"
+          },
+          {
+            "type": "textarea",
+            "id": "subheading",
+            "label": "Subheading",
+            "default": "Column text"
+          },
+          {
+            "type": "range",
+            "id": "text_max_width",
+            "label": "Max width of text",
+            "min": 16,
+            "max": 50,
+            "step": 1,
+            "default": 36
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "Link"
+          },
+          {
+            "type": "text",
+            "id": "link_text",
+            "label": "Link text",
+            "default": "Read more"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Text columns with images",
+        "category": "Text",
+        "blocks": [
+          {
+            "type": "column",
+            "settings": {
+              "title": "Column one",
+              "subheading": "Start here. Introduce your vision, or explain why what you do or sell is superior to your competitors.",
+              "link_text": "Read more"
+            }
+          },
+          {
+            "type": "column",
+            "settings": {
+              "title": "Column two",
+              "subheading": "Get into your process a bit. The quality of handiwork, proprietary knowledge, or materials that you use that make your products better. ",
+              "link_text": "Read more"
+            }
+          },
+          {
+            "type": "column",
+            "settings": {
+              "title": "Column three",
+              "subheading": "End it with an action item that the user can take advantage of. Link to a more in-depth page, or go straight to a collection. Your call.",
+              "link_text": "Read more"
+            }
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

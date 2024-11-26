@@ -1,0 +1,149 @@
+<!doctype html>
+
+<!--
+      ___                       ___           ___           ___
+     /  /\                     /__/\         /  /\         /  /\
+    /  /:/_                    \  \:\       /  /:/        /  /::\
+   /  /:/ /\  ___     ___       \  \:\     /  /:/        /  /:/\:\
+  /  /:/ /:/ /__/\   /  /\  ___  \  \:\   /  /:/  ___   /  /:/  \:\
+ /__/:/ /:/  \  \:\ /  /:/ /__/\  \__\:\ /__/:/  /  /\ /__/:/ \__\:\
+ \  \:\/:/    \  \:\  /:/  \  \:\ /  /:/ \  \:\ /  /:/ \  \:\ /  /:/
+  \  \::/      \  \:\/:/    \  \:\  /:/   \  \:\  /:/   \  \:\  /:/
+   \  \:\       \  \::/      \  \:\/:/     \  \:\/:/     \  \:\/:/
+    \  \:\       \__\/        \  \::/       \  \::/       \  \::/
+     \__\/                     \__\/         \__\/         \__\/
+
+--------------------------------------------------------------------
+#  Lorenza v3.4.1
+#  Documentation: https://fluorescent.co/help/lorenza/
+#  Purchase: https://themes.shopify.com/themes/lorenza
+#  A product by Fluorescent: https://fluorescent.co/
+--------------------------------------------------------------------
+
+-->
+
+<html class="no-js" lang="{{ shop.locale }}">
+<head>
+<link rel='preconnect dns-prefetch' href='https://api.config-security.com/' crossorigin />
+<link rel='preconnect dns-prefetch' href='https://conf.config-security.com/' crossorigin />
+<link rel='preconnect dns-prefetch' href='https://whale.camera/' crossorigin />
+<script>
+/* >> TriplePixel :: start*/
+window.TriplePixelData={TripleName:"pittie-clothing-co.myshopify.com",ver:"2.12",plat:"SHOPIFY",isHeadless:false},function(W,H,A,L,E,_,B,N){function O(U,T,P,H,R){void 0===R&&(R=!1),H=new XMLHttpRequest,P?(H.open("POST",U,!0),H.setRequestHeader("Content-Type","text/plain")):H.open("GET",U,!0),H.send(JSON.stringify(P||{})),H.onreadystatechange=function(){4===H.readyState&&200===H.status?(R=H.responseText,U.includes(".txt")?eval(R):P||(N[B]=R)):(299<H.status||H.status<200)&&T&&!R&&(R=!0,O(U,T-1,P))}}if(N=window,!N[H+"sn"]){N[H+"sn"]=1,L=function(){return Date.now().toString(36)+"_"+Math.random().toString(36)};try{A.setItem(H,1+(0|A.getItem(H)||0)),(E=JSON.parse(A.getItem(H+"U")||"[]")).push({u:location.href,r:document.referrer,t:Date.now(),id:L()}),A.setItem(H+"U",JSON.stringify(E))}catch(e){}var i,m,p;A.getItem('"!nC`')||(_=A,A=N,A[H]||(E=A[H]=function(t,e,a){return void 0===a&&(a=[]),"State"==t?E.s:(W=L(),(E._q=E._q||[]).push([W,t,e].concat(a)),W)},E.s="Installed",E._q=[],E.ch=W,B="configSecurityConfModel",N[B]=1,O("https://conf.config-security.com/model",5),i=L(),m=A[atob("c2NyZWVu")],_.setItem("di_pmt_wt",i),p={id:i,action:"profile",avatar:_.getItem("auth-security_rand_salt_"),time:m[atob("d2lkdGg=")]+":"+m[atob("aGVpZ2h0")],host:A.TriplePixelData.TripleName,plat:A.TriplePixelData.plat,url:window.location.href,ref:document.referrer,ver:A.TriplePixelData.ver},O("https://api.config-security.com/event",5,p),O("https://whale.camera/live/dot.txt",5)))}}("","TriplePixel",localStorage);
+/* << TriplePixel :: end*/
+</script>
+<link rel='preconnect dns-prefetch' href='https://triplewhale-pixel.web.app/' crossorigin />
+
+  <meta content="p85l3S8Sz66nS8wMuEQEdRxt9AN8q4xEQSSdMqklqUI" name="google-site-verification"/>
+  <meta name="facebook-domain-verification" content="qq9mcjihizxaym1o79rv9lt7mnmo7x" />
+  <meta name="google-site-verification" content="qJR698rfx39-V85-PRKS1zqbfpIsSLl12rhf-OIPiqc" />
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  {% if template contains 'customers' %}
+      {{ "shopify_common.js" | shopify_asset_url | script_tag }}
+      {{ "customer_area.js"  | shopify_asset_url | script_tag }}
+  {% endif %}
+
+  {%- if settings.favicon != blank -%}
+    <link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
+  {%- endif -%}
+
+  {%- capture seo_title -%}
+    {%- if request.page_type == 'search' and search.performed == true -%}
+      {{ 'general.search.heading' | t: count: search.results_count }}: {{ 'general.search.results_with_count' | t: terms: search.terms, count: search.results_count }}
+    {%- else -%}
+      {{ page_title }}
+    {%- endif -%}
+    {%- if current_tags -%}
+      {%- assign meta_tags = current_tags | join: ', ' -%} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags -}}
+    {%- endif -%}
+    {%- if current_page != 1 -%}
+      &ndash; {{ 'general.meta.page' | t: page: current_page }}
+    {%- endif -%}
+    {%- assign escaped_page_title = page_title | escape -%}
+    {%- unless escaped_page_title contains shop.name -%}
+      &ndash; {{ shop.name }}
+    {%- endunless -%}
+  {%- endcapture -%}
+  <title>{{ seo_title | strip }}</title>
+
+  {%- if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+
+  {% render 'social-meta-tags' %}
+
+  {% render 'theme-setup' %}
+  {% render 'theme-setting-vars' %}
+  {{ 'index.css' | asset_url | stylesheet_tag }}
+  {% render 'theme-liquid-css-assets' %}
+
+  {{ content_for_header }}
+  {% include 'judgeme_core' %}
+</head>
+
+<body 
+  class="template-{{ request.page_type | handle }}{% if settings.uppercase_headings %} g-uppercase{% endif %}"
+  data-zoom-animation-enabled="{{ settings.enable_zoom_on_scroll }}"
+>
+
+  <header class="header-container">
+    {% section 'announcement-bar' %}
+    {% section 'header' %}
+  </header>
+  {% render 'header-overlay' %}
+
+  <div class="theme-editor-scroll-offset"></div>
+  {{ content_for_layout }}
+  {% section 'exit-intent' %}
+  {% section 'footer' %}
+  {% render 'cart-drawer' %}
+  {% render 'modal' %}
+  {% render 'store-availability-drawer' %}
+  {% render 'drawer-overlay' %}
+
+  {{ '//www.youtube.com/iframe_api' | script_tag }}
+  {{ '//cdn.shopify.com/shopifycloud/shopify-plyr/v1.0/shopify-plyr.css' | stylesheet_tag }}
+  <script src="{{ 'index.js' | asset_url }}" defer="defer"></script>
+  {% include 'wisepops-generated' %}
+  
+  <script src="https://a.klaviyo.com/media/js/onsite/onsite.js"></script>
+<script>
+    var klaviyo = klaviyo || [];
+    klaviyo.init({
+      account: "TgTaBU",
+      platform: "shopify"
+    });
+    klaviyo.enable("backinstock",{ 
+    trigger: {
+      product_page_text: "Notify Me When Available",
+      product_page_class: "btn",
+      product_page_text_align: "center",
+      product_page_margin: "50px",
+      alternate_anchor: true
+    },
+    modal: {
+     headline: "{product_name}",
+     body_content: "Register to receive a notification when this item comes back in stock.",
+     email_field_label: "Email",
+     button_label: "NOTIFY ME WHEN AVAILABLE",
+     subscription_success_label: "You're in! We'll let you know when it's back.",
+     footer_content: '',
+     additional_styles: "@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');",
+     drop_background_color: "#000",
+     background_color: "#fff",
+     text_color: "#222",
+     close_button_color: "#ccc",
+     error_background_color: "#fcd6d7",
+     error_text_color: "#C72E2F",
+     success_background_color: "#d3efcd",
+     success_text_color: "#1B9500",
+     headers_font_family: "@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@900&display=swap');"
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<div class="product-page-wrapper">
+  <div class="product-page-wrapper__inner">
+    {% section 'product--static' %}
+    
+    {% section 'text--static' %}
+    {% section 'gallery-grid--static' %}
+    {% section 'product-recommendations--static' %}
+    
+  </div>
+  <div class="product-page-wrapper__inner" style="min-height:unset;">
+  {% render 'judgeme_widgets', widget_type: 'judgeme_review_widget', concierge_install: true, product: product %}
+  </div>
+</div>
+
+<script type="text/javascript">
+  var _learnq = _learnq || [];
+  var classname = document.getElementsByClassName("add_to_cart");
+  var addToCart = function() {
+  _learnq.push(['track', 'Added to Cart', item]);
+  };   for (var i = 0; i < classname.length; i++) {
+  classname[i].addEventListener('click', addToCart, false);
+  }
+  </script>
+
+
+
+
+{% comment %} {% section 'sezzle-widget' %} {% endcomment %}

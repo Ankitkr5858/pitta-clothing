@@ -1,0 +1,272 @@
+{% liquid
+  assign paginate_by = section.settings.per_page
+
+  assign paginated = false
+  if section.settings.pagination == 'paginated'
+    assign paginated = true
+  endif
+%}
+
+<section
+  class="collection collection--pagination-paginated collection--has-border collection--has-filters"
+  data-section-id="{{ section.id }}"
+  data-section-type="collection"
+  data-pagination-type="{{ section.settings.pagination }}"
+  data-collection-item-count="{{ collection.all_products_count }}"
+>
+  {%- if collection.all_products_count > 0 -%}
+    {% paginate collection.products by paginate_by %}
+      <div class="collection__container">
+        <div class="new-collection-top-bar__heading-filter">
+          <h2 class="text-block__heading type-heading-1" style="color:{{section.settings.text_color}};">{{collection.title}}</h2>
+          <div class="heading-filter__trigger" data-filter-popup-trigger>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M2.833 2.5C2.833 2.28109 2.87612 2.06432 2.95989 1.86207C3.04367 1.65982 3.16646 1.47605 3.32125 1.32126C3.47605 1.16646 3.65982 1.04367 3.86207 0.959897C4.06432 0.876122 4.28109 0.833004 4.5 0.833004C4.71891 0.833004 4.93568 0.876122 5.13793 0.959897C5.34018 1.04367 5.52395 1.16646 5.67875 1.32126C5.83354 1.47605 5.95633 1.65982 6.04011 1.86207C6.12388 2.06432 6.167 2.28109 6.167 2.5C6.167 2.94212 5.99137 3.36613 5.67875 3.67875C5.36612 3.99137 4.94212 4.167 4.5 4.167C4.05788 4.167 3.63388 3.99137 3.32125 3.67875C3.00863 3.36613 2.833 2.94212 2.833 2.5ZM2.05 3H0.5C0.367392 3 0.240215 2.94733 0.146447 2.85356C0.0526785 2.75979 0 2.63261 0 2.5C0 2.3674 0.0526785 2.24022 0.146447 2.14645C0.240215 2.05268 0.367392 2 0.5 2H2.05C2.16476 1.43486 2.47136 0.926766 2.91787 0.561815C3.36438 0.196863 3.92332 -0.00250244 4.5 -0.00250244C5.07668 -0.00250244 5.63562 0.196863 6.08213 0.561815C6.52864 0.926766 6.83524 1.43486 6.95 2H15.5C15.6326 2 15.7598 2.05268 15.8536 2.14645C15.9473 2.24022 16 2.3674 16 2.5C16 2.63261 15.9473 2.75979 15.8536 2.85356C15.7598 2.94733 15.6326 3 15.5 3H6.95C6.83524 3.56515 6.52864 4.07324 6.08213 4.43819C5.63562 4.80314 5.07668 5.00251 4.5 5.00251C3.92332 5.00251 3.36438 4.80314 2.91787 4.43819C2.47136 4.07324 2.16476 3.56515 2.05 3ZM13.167 9.5C13.167 9.05789 12.9914 8.63388 12.6787 8.32126C12.3661 8.00863 11.9421 7.833 11.5 7.833C11.0579 7.833 10.6339 8.00863 10.3213 8.32126C10.0086 8.63388 9.833 9.05789 9.833 9.5C9.833 9.94212 10.0086 10.3661 10.3213 10.6788C10.6339 10.9914 11.0579 11.167 11.5 11.167C11.9421 11.167 12.3661 10.9914 12.6787 10.6788C12.9914 10.3661 13.167 9.94212 13.167 9.5ZM11.5 7C12.0763 6.99989 12.635 7.1989 13.0815 7.56335C13.5279 7.92781 13.8347 8.43532 13.95 9H15.5C15.6326 9 15.7598 9.05268 15.8536 9.14645C15.9473 9.24022 16 9.3674 16 9.5C16 9.63261 15.9473 9.75979 15.8536 9.85356C15.7598 9.94733 15.6326 10 15.5 10H13.95C13.8352 10.5651 13.5286 11.0732 13.0821 11.4382C12.6356 11.8031 12.0767 12.0025 11.5 12.0025C10.9233 12.0025 10.3644 11.8031 9.91787 11.4382C9.47136 11.0732 9.16476 10.5651 9.05 10H0.5C0.367392 10 0.240215 9.94733 0.146447 9.85356C0.0526785 9.75979 0 9.63261 0 9.5C0 9.3674 0.0526785 9.24022 0.146447 9.14645C0.240215 9.05268 0.367392 9 0.5 9H9.05C9.16527 8.43532 9.47209 7.92781 9.91855 7.56335C10.365 7.1989 10.9237 6.99989 11.5 7Z" fill="#121212" fill-opacity="0.85"/>
+            </svg>
+            <span>Filter</span>
+          </div>
+        </div>
+
+        <div class="collection__content">
+          <div class="collection__sidebar collection-filter">
+            {% render 'collection-nf--filter', show_filters: section.settings.show_filters, drawer: false %}
+          </div>
+
+          <div class="collection__main-area">
+            <div class="collection__window">
+              <div class="collection__loading" data-loading>
+                {% render 'loader' %}
+              </div>
+
+              <div id="root" class="collection__products" data-partial>
+                <div class="grid-display w-100 grid-display--one-quarter grid-display--has-products grid-display--natural collection__infinite-container">
+                  {% for product in collection.products %}
+                    
+                    {%- comment -%} Collection banner {%- endcomment -%}
+                    {% assign current_index = forloop.index %}
+                    {% for block in section.blocks %}
+                      {% if block.type == 'product_banner' %}
+                        {% if block.settings.product_banner_position == current_index and current_page == 1 %}
+                          <div class="product-item">
+                            <div class="product-banner-main product-item-{{ block.id }} mb3">
+                              <div class="product-banner">
+                                {% if block.settings.product_banner_image != blank%}
+                                <div class="product-banner-icon">
+                                  <img src="{{ block.settings.product_banner_image | img_url: '300x' }}" alt="{{ block.settings.product_banner_image.alt }}"/>
+                                </div>
+                                {% endif %}
+                                {% if block.settings.title != blank or  block.settings.product_banner_content != blank %}
+                                <div class="product-banner-content">
+                                  <div class="product-banner-title">{{ block.settings.title }}</div>
+                                  <div class="product-banner-subtitle">{{ block.settings.product_banner_content }}</div>
+                                </div>
+                                {% endif %}
+                              </div>
+                            </div>
+                          </div>
+                          <style>
+                            .product-item-{{ block.id }} {
+                              background: {{ block.settings.product_banner_bg_color }};
+                            }
+                          </style>
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+
+                    {%- comment -%} Product grid {%- endcomment -%}
+                    {%
+                      render 'product-item' with
+                      product: product,
+                      swatches_enabled: section.settings.show_swatches,
+                      aspect_ratio: blank
+                    %}
+                  {% else %}
+                    <div class="collection__empty">
+                      <div>{{ 'collections.general.no_products' | t }}</div>
+                      <a data-clear="true">{{ 'collections.filters.clear' | t }}</a>
+                    </div>
+                  {% endfor %}
+                </div>
+
+                {% unless paginated %}
+                  <div class="collection__infinite-trigger">
+                    {% if paginate.next %}
+                      <a href="{{ paginate.next.url }}" class="bttn bttn--secondary">
+                        {{- 'general.pagination.load_more' | t -}}
+                      </a>
+                    {% endif %}
+                  </div>
+                {% endunless %}
+
+                {% if paginated %}
+                  <div class="mt3 w-100">
+                    {% if paginate.pages > 1 %}
+                      {%
+                        render 'pagination' with
+                        paginate: paginate,
+                        type: 'general.pagination.products'
+                      %}
+                    {% else %}
+                      {%
+                        render 'pagination' with
+                        paginate: paginate,
+                        type: 'general.pagination.products',
+                        display_paginate_item_count_only: true
+                      %}
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endpaginate %}
+
+    <div class="collection__filter-drawer" data-filter-drawer>
+      <div class="filter-drawer__wrapper">
+        <div class="filter-drawer__header">
+          <h3>Filter</h3>
+          <span data-close-filter-drawer>x</span>
+        </div>
+        
+        <div class="collection-filter">
+          {% render 'collection-nf--filter', show_filters: section.settings.show_filters, drawer: true %}
+        </div>
+      </div>
+
+      <div class="filter-drawer__overlay" data-close-filter-drawer></div>
+    </div>
+
+    <div class="filter-sort__flyout">
+      <div class="collection-flyout__wash" data-filter-wash></div>
+    </div>
+  {%- else -%}
+    <div class="collection__empty ta-c">
+      <p class="fs-body-base mb0">{{ 'collections.general.no_matches' | t }}</p>
+      <a
+        class="btn btn--text-link"
+        href="{{ routes.all_products_collection_url }}"
+      >
+        {{- 'cart.general.continue_shopping' | t -}}
+      </a>
+    </div>
+  {%- endif -%}
+</section>
+
+
+{% schema %}
+{
+  "name": "Collection Template",
+  "class": "section-dynamic section-borderable bm-collection-nf-template",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#142A4A"
+    },
+    {
+      "type": "header",
+      "content": "Filtering"
+    },
+    {
+      "id": "show_sort",
+      "type": "checkbox",
+      "label": "Show sort options",
+      "default": true
+    },
+    {
+      "id": "show_filters",
+      "type": "checkbox",
+      "label": "Show filters",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Collection"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_swatches",
+      "label": "Show swatches",
+      "default": false
+    },
+    {
+      "type": "paragraph",
+      "content": "Add swatch image files to your store's [files area](/admin/settings/files). Make sure the file names match the names of your color variants. For example, a variant called Blue would need a file called 'blue.png'"
+    },
+    {
+      "id": "per_page",
+      "type": "range",
+      "label": "Products per page",
+      "default": 25,
+      "min": 10,
+      "max": 35,
+      "step": 5
+    },
+    {
+      "type": "select",
+      "id": "pagination",
+      "label": "Pagination",
+      "default": "paginated",
+      "options": [
+        {
+          "value": "infinite",
+          "label": "Infinite"
+        },
+        {
+          "value": "click",
+          "label": "Click to load"
+        },
+        {
+          "value": "paginated",
+          "label": "Paginated"
+        }
+      ],
+      "info": "This setting determines how additional pages of products are navigated."
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Product info card",
+      "type": "product_banner",
+      "settings": [
+        {
+          "type": "color_background",
+          "id": "product_banner_bg_color",
+          "label": "Background color"
+        },
+        {
+          "type": "image_picker",
+          "id": "product_banner_image",
+          "label": "Icon"
+        },
+        {
+          "type": "richtext",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "product_banner_content",
+          "label": "Subtitle"
+        },
+        {
+          "type": "range",
+          "id": "product_banner_position",
+          "label": "Info position",
+          "min": 1,
+          "max": 35,
+          "default": 3,
+          "step": 1
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

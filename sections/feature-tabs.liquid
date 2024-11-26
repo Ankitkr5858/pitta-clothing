@@ -1,0 +1,124 @@
+<div class="feature-tabs section">
+  <div class="feature-tabs-inner">
+    {% for block in section.blocks %}
+      <div class="tab">
+        <img src="{{ block.settings.tab_image | img_url: 'master' }}" alt="">
+        <p>{{ block.settings.tab_text }}</p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+
+
+{% schema %}
+{
+  "name": "Feature Tabs Section",
+  "class": "section-Feature",
+  "settings":[
+    
+            {
+      "id": "tab_font_size",
+      "type": "range",
+      "label": "Text Font Size (Desktop)",
+      "default": 18,
+      "min": 12,
+      "max": 48
+    },
+       {
+      "id": "tab_font_size_mob",
+      "type": "range",
+      "label": "Text Font Size (Mobile)",
+      "default": 16,
+      "min": 12,
+      "max": 36
+    },
+          {
+      "id": "tab_color",
+      "type": "color",
+      "label": " Text Color"      
+    }
+    
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        {
+          "id": "tab_image",
+          "type": "image_picker",
+          "label": "Tab Image"
+        },
+        {
+          "id": "tab_text",
+          "type": "text",
+          "label": "Tab Text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Feature Tabs Section",
+      "category": "Sections"
+    }
+  ]
+}
+{% endschema %}
+
+{% style %}
+
+  .feature-tabs{
+    background: #EEF7FB;
+  }
+
+  .feature-tabs-inner{
+    display:flex;
+    justify-content:space-between;
+  }
+  .tab{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    padding:0 !important;
+  }
+  .tab p{
+    margin:0;
+    color: {{section.settings.tab_color}};   
+    font-size:{{section.settings.tab_font_size}}px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 28px; /* 175% */
+  }
+  .tab img{
+    width:40px;
+  }
+
+  .feature-tabs-inner{
+    padding:0 !important;
+  }
+
+    @media(max-width:60em){
+      .tab p{
+        font-size:{{section.settings.tab_font_size_mob}}px;        
+        text-align: left;      
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+      }
+    }
+
+   @media(max-width:767px){
+    .feature-tabs-inner{
+      flex-direction:column;
+      padding:0 !important;
+      gap:5px;
+    }
+    
+  }
+{% endstyle %}
+
+{% javascript %}
+{% endjavascript %}

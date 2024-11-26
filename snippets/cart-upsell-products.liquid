@@ -1,0 +1,365 @@
+<style>
+  .drawer-custom-products {
+    display: flex;
+    width: auto;
+    padding: 10px 15px 18px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    background: #eef7fb;
+  }
+  .drawer-custom-products.hidden {
+    display: none;
+  }
+  .custom-products-title {
+    color: #142a4a;
+    font-family: Roboto Slab;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+  .product-container {
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    gap: 15px;
+    align-self: stretch;
+    color: #142a4a;
+  }
+  .drawer-product {
+    display: flex;
+    padding: 0px 5px;
+    flex-direction: column;
+    align-items: center;
+    flex: 1 0 0;
+    background: #eef7fb;
+    max-width: 50%;
+  }
+  .drawer-product.hidden {
+    display: none;
+  }
+  .drawer-product .image {
+    /* width: 120px;
+    height: 120px; */
+  }
+  .drawer-product .image img {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .drawer-product .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 8px;
+    width: 125px;
+    color: #142a4a;
+    align-self: stretch;
+    font-family: 'Montserrat';
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 14px;
+    padding-top: 10px;
+  }
+  .drawer-product .content div[data-price-wrapper] {
+    color: #142a4a;
+    font-family: Montserrat;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 100%;
+  }
+  .drawer-product .space {
+    display: none;
+  }
+  .drawer-product .content:has(s:not(empty)) .space {
+    display: inline;
+  }
+  .drawer-product .add_to_cart {
+    display: flex;
+    padding: 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+    border: 1px solid #4ee5e6 !important;
+    color: #142a4a !important;
+    background-color: transparent;
+    font-family: Montserrat;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 20x;
+    cursor: pointer;
+    height: unset;
+    position: relative;
+  }
+  .drawer-product .add_to_cart .bttn__spinner {
+    position: absolute;
+  }
+  footer.quick-cart__footer.js-footer.active {
+    font-size: 15px;
+    line-height: 24px;
+    padding: 10px var(--spacing-medium);
+  }
+  footer .quick-cart__checkout-button {
+    margin-top: 10px;
+    font-size: 16px;
+  }
+  .drawer-product.swiper-slide {
+    max-width: 150px;
+    /* margin-right: 20px !important; */
+  }
+  .swiper {
+    width: 100%;
+    height: auto;
+  }
+
+  .swiper-wrapper {
+    display: flex;
+    align-items: stretch;
+  }
+  /* span.swiper-pagination-bullet.swiper-pagination-bullet-active {
+    background: #494949;
+    width: 18px;
+    border-radius: 25px;
+    transition: 0.2s;
+    opacity: 1; */
+  }
+  .swiper-slide {
+    flex: 1 0 auto;
+    display: flex;
+    justify-content: center;
+  }
+  /* .swiper-pagination-bullet {
+    background-color: #000;
+    opacity: 0.4;
+  }
+  .swiper-pagination.swiper-pagination-clickable.swiper-pagination-bullets.swiper-pagination-horizontal {
+    bottom: -4px;
+  }
+  .swiper-pagination-bullet-active {
+    background-color: #fff;
+  } */
+</style>
+
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js" defer></script>
+
+<div class="c-empty-cart-wrapper empty-state" id="empty-cart-wrapper">
+  <div class="c-empty-cart">
+    <p class="c-emptyheading">{{ settings.empty_heading }}</p>
+    <div class="c-empty-cart-button-cards">
+      {% for i in (1..6) %}
+        {% capture url_key %}empty_url{{ i }}{% endcapture %}
+        {% capture image_key %}empty_image{{ i }}{% endcapture %}
+        {% capture text_key %}empty_text{{ i }}{% endcapture %}
+        {% capture heading_key %}collection_empty{{ i }}{% endcapture %}
+
+        <a href="{{ settings[url_key] }}" class="c-empty-cart-button-card">
+          <div>
+            <h3 class="c-collection-empty-cart-text">{{ settings[heading_key] }}</h3>
+          </div>
+          {% if settings[image_key] %}
+            {{
+              settings[image_key]
+              | image_url: width: 750
+              | image_tag: loading: 'lazy', height: 'auto', class: 'c-empty-cart-image'
+            }}
+          {% endif %}
+          <p class="c-empty-cart-text">{{ settings[text_key] }}</p>
+        </a>
+      {% endfor %}
+    </div>
+    <div class="c-empty-card-button">
+      <a href="{{ settings.empty_butotn_url }}" type="submit">
+        {{- settings.empty_butotn -}}
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="c-recommended-product-section">
+  {% if settings.recommendations_title %}
+    <h2 class="c-slider-heading">{{ settings.recommendations_title }}</h2>
+  {% endif %}
+
+  <div class="cart-drawer__recommendations">
+    <div class="v-stack gap-2.5 sm:gap-4">
+      {%- capture carousel_id -%}cart-drawer-recommendations{%- endcapture -%}
+
+      {%- liquid
+        assign horizontal_products_blends = true
+        assign product_card_background = section.settings.product_card_background | default: product.settings.product_card_background
+
+        if product_card_background != 'rgba(0,0,0,0)' and product_card_background != blank and product_card_background != settings.dialog_background
+          assign horizontal_products_blends = false
+        endif
+
+        assign rendered_recommendations = 0
+
+        capture recommendations
+          for recommended_product in settings.recommendations_products
+            assign item_count_in_cart = cart | line_items_for: recommended_product
+
+            if item_count_in_cart.size == 0
+              render 'horizontal-product', product: recommended_product, show_add_to_cart: true, background: section.settings.product_card_background, text_color: section.settings.product_card_text_color
+              assign rendered_recommendations = rendered_recommendations | plus: 1
+            endif
+          endfor
+        endcapture
+      -%}
+
+      {%- if rendered_recommendations > 0 -%}
+        <div class="h-stack justify-between gap-4">
+          {%- if rendered_recommendations > 1 -%}
+            <div class="h-stack gap-2 hidden sm:flex">
+              <button
+                is="prev-button"
+                class="c-circle-chevron hover:colors swiper-button-prev"
+                aria-controls="{{ carousel_id }}"
+              >
+                {%- render 'icon' with 'chevron-left-small', direction_aware: true -%}
+              </button>
+              <button
+                is="next-button"
+                class="c-circle-chevron hover:colors swiper-button-next"
+                aria-controls="{{ carousel_id }}"
+              >
+                {%- render 'icon' with 'chevron-right-small', direction_aware: true -%}
+              </button>
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if recommendations != blank -%}
+        <div
+          id="{{ carousel_id }}"
+          class="swiper mySwiper horizontal-product-list-carousel {% unless horizontal_products_blends %}separate{% endunless %} scroll-area bleed"
+        >
+          <div class="swiper-wrapper horizontal-product-list {% if horizontal_products_blends %}divide-x{% else %}separate{% endif %}">
+            {% for recommended_product in settings.recommendations_products %}
+              {% assign product_1 = recommended_product %}
+              {% assign item_count_in_cart = cart | line_items_for: recommended_product %}
+              {% if item_count_in_cart.size == 0 and product_1.available %}
+                <div
+                  class="drawer-product swiper-slide"
+                  data-section-type="featured-product"
+                  data-section-id="{{product_1.handle}}"
+                  data-id="{{product_1.selected_or_first_available_variant.id}}"
+                >
+                  <div class="c-badge">
+                    <span>{{ settings.budgetitle }}</span>
+                  </div>
+                  <div class="image">
+                    <img
+                      src="{{ product_1.featured_image | image_url: width: 300 }}"
+                      width="1"
+                      ,
+                      height="1"
+                    >
+                  </div>
+                  <div class="content">
+                    <div>
+                      {{ product_1.title }}
+                    </div>
+                    <div data-price-wrapper>
+                      <span class="quick-shop__product-price-wrapper">
+                        <span class="visually-hidden" data-compare-text>
+                          {{- 'products.product.regular_price' | t -}}
+                        </span>
+                        <s class="meta" data-compare-price>
+                          {% if product_1.selected_or_first_available_variant.compare_at_price
+                              > product_1.selected_or_first_available_variant.price
+                          %}
+                            {{ product_1.selected_or_first_available_variant.compare_at_price | money }}
+                          {% endif %}
+                        </s>
+
+                        <span data-product-price class="quick-shop__product-price">
+                          {{ product_1.selected_or_first_available_variant.price | money }}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                  {%
+                    render 'recommendations-product-form' with
+                    product: product_1,
+                    show_vendor: false,
+                    current_variant: product_1.selected_or_first_available_variant,
+                    show_dynamic_checkout: false,
+                    show_swatches: false,
+                    show_quantity_input: false,
+                  %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+          {% comment %}
+            <!-- Add Pagination (Dots) -->
+            <div class="swiper-pagination"></div>
+          {% endcomment %}
+
+          <div class="swiper-scrollbar"></div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<div class="c-hamburger-menu-content">
+  <div class="c-ham-star">
+    {% if settings.ratings != blank %}
+      <div class="c-stars text-center">
+        {% assign rating = settings.ratings %}
+        {% for i in (1..rating) %}
+          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none">
+            <g clip-path="url(#clip0_9_572)">
+            <path d="M15.7068 7.45779C15.872 7.33473 15.9945 7.16307 16.0572 6.96686C16.1199 6.77065 16.1196 6.55974 16.0564 6.3637C15.9932 6.16767 15.8702 5.99633 15.7047 5.87372C15.5392 5.75111 15.3394 5.68337 15.1335 5.68001L11.1335 5.5289C11.1138 5.52754 11.095 5.52053 11.0792 5.5087C11.0634 5.49687 11.0514 5.48073 11.0446 5.46223L9.66238 1.7289C9.59293 1.53896 9.4668 1.37495 9.30105 1.25908C9.1353 1.1432 8.93795 1.08105 8.73571 1.08105C8.53348 1.08105 8.33613 1.1432 8.17038 1.25908C8.00463 1.37495 7.87849 1.53896 7.80905 1.7289L6.43127 5.47557C6.42446 5.49407 6.41244 5.5102 6.39667 5.52203C6.3809 5.53386 6.36205 5.54088 6.34238 5.54223L2.34238 5.69334C2.13643 5.69671 1.93669 5.76444 1.77118 5.88705C1.60566 6.00966 1.48267 6.181 1.41945 6.37704C1.35623 6.57308 1.35595 6.78399 1.41864 6.98019C1.48134 7.1764 1.60386 7.34807 1.76905 7.47112L4.90682 9.93779C4.92253 9.95015 4.93427 9.96684 4.94059 9.98579C4.9469 10.0048 4.94753 10.0251 4.94238 10.0445L3.86238 13.8711C3.80642 14.066 3.81184 14.2734 3.87791 14.465C3.94398 14.6567 4.06749 14.8234 4.23165 14.9424C4.3958 15.0613 4.59262 15.1269 4.79534 15.13C4.99805 15.1332 5.19682 15.0738 5.3646 14.96L8.68016 12.7378C8.69649 12.7265 8.71587 12.7205 8.73571 12.7205C8.75556 12.7205 8.77494 12.7265 8.79127 12.7378L12.1068 14.96C12.2723 15.0777 12.4704 15.141 12.6735 15.141C12.8766 15.141 13.0746 15.0777 13.2402 14.96C13.4044 14.8421 13.528 14.6763 13.594 14.4853C13.6601 14.2943 13.6653 14.0875 13.609 13.8933L12.5202 10.0533C12.5144 10.0341 12.5147 10.0135 12.5211 9.99439C12.5274 9.9753 12.5395 9.95864 12.5557 9.94668L15.7068 7.45779Z" fill="#D81F5B"/>
+            </g>
+            <defs>
+            <clipPath id="clip0_9_572">
+            <rect width="16" height="16" fill="white" transform="translate(0.595703)"/>
+            </clipPath>
+            </defs>
+          </svg>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+  <div class="c-top-content">
+    <h2>{{ settings.heading }}</h2>
+    <p>{{ settings.content_text }}</p>
+    <h3>{{ settings.lastname }}</h3>
+    <h4>{{ settings.content_text_last }}</h4>
+  </div>
+</div>
+
+<!-- Add Swiper JS -->
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+<script>
+  var swiper = new Swiper('.swiper', {
+    slidesPerView: 'auto',
+    spaceBetween: 10,
+    // pagination: {
+    //   el: '.swiper-pagination',
+    // },
+    scrollbar: {
+      el: '.swiper-scrollbar'
+    },
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    breakpoints: {
+      640: {
+        // slidesPerView: 2,
+        spaceBetween: 20,
+      }
+    },
+  });
+</script>

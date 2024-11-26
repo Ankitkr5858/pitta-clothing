@@ -1,0 +1,212 @@
+{% unless section.settings.hide_section %}
+  <style>
+    #section-{{ section.id }}.countdown-bar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background-color: {{ section.settings.bg_color }};
+      color: {{ section.settings.text_color }};
+      padding: 8px 16px;
+    }
+
+    #section-{{ section.id }} p, h1, h2, h3, h4, h5, h6 {
+      margin: 0;
+      line-height: normal;
+    }
+
+    #section-{{ section.id }} .countdown-bar-text {
+      font-size: 14px;
+      text-align: center;
+    }
+
+    #section-{{ section.id }} .countdown-bar-time-container {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    #section-{{ section.id }} .countdown-bar-time-cell {
+      min-width: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      background-color: {{ section.settings.time_bg_color }};
+      color: {{ section.settings.time_text_color }};
+      border-radius: 2px;
+      padding: 3px;
+      line-height: normal;
+    }
+
+    #section-{{ section.id }} .countdown-bar-time-number {
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    #section-{{ section.id }} .countdown-bar-time-label {
+      font-size: 8px;
+    }
+
+    #section-{{ section.id }} .countdown-bar-time-separator {
+      font-weight: bold;
+    }
+
+    @media screen and (min-width: 700px) {
+      #section-{{ section.id }} .countdown-bar-text {
+        font-size: 16px;
+      }
+    }
+  </style>
+
+  <div id="section-{{ section.id }}" class="countdown-bar">
+    {% if section.settings.text != blank %}
+      <div class="countdown-bar-text">{{ section.settings.text }}</div>
+    {% endif %}
+    <div id="cbt-clock" class="countdown-bar-time-container">
+      <div class="countdown-bar-time-cell">
+        <p id="cbt-clock-days" class="countdown-bar-time-number"></p>
+        <p class="countdown-bar-time-label">DAYS</p>
+      </div>
+
+      <p id="cbt-clock-days-separator" class="countdown-bar-time-separator">:</p>
+
+      <div class="countdown-bar-time-cell">
+        <p id="cbt-clock-hours" class="countdown-bar-time-number"></p>
+        <p class="countdown-bar-time-label">HRS</p>
+      </div>
+
+      <p id="cbt-clock-hours-separator" class="countdown-bar-time-separator">:</p>
+
+      <div class="countdown-bar-time-cell">
+        <p id="cbt-clock-minutes" class="countdown-bar-time-number"></p>
+        <p class="countdown-bar-time-label">MIN</p>
+      </div>
+
+      <p id="cbt-clock-min-separator" class="countdown-bar-time-separator">:</p>
+
+      <div class="countdown-bar-time-cell">
+        <p id="cbt-clock-seconds" class="countdown-bar-time-number"></p>
+        <p class="countdown-bar-time-label">SEC</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    const targetDateStr = '{{ section.settings.date_picker }} {{ section.settings.time_picker }}';
+    const targetDate = new Date(targetDateStr.replace(/-/g, "/"));
+
+    function updateCountdown() {
+      
+      const now = new Date();
+      const nowUTC = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+
+      const diff = targetDate - nowUTC;
+
+      if (diff < 0 || targetDate == 'Invalid Date') {
+        document.getElementById('cbt-clock-days').textContent = '0';
+        document.getElementById('cbt-clock-hours').textContent = '0';
+        document.getElementById('cbt-clock-minutes').textContent = '0';
+        document.getElementById('cbt-clock-seconds').textContent = '0';
+        document.getElementById('cbt-clock-seconds').setAttribute('finished', '');
+        // clearInterval(intervalId);
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      document.getElementById('cbt-clock-days').textContent = days;
+      document.getElementById('cbt-clock-hours').textContent = hours;
+      document.getElementById('cbt-clock-minutes').textContent = minutes;
+      document.getElementById('cbt-clock-seconds').textContent = seconds;
+
+      const daysElement = document.getElementById('cbt-clock-days').parentNode;
+      const separatorElement = document.getElementById('cbt-clock-days-separator');
+
+      if (days === 0) {
+        daysElement.style.display = 'none';
+        separatorElement.style.display = 'none';
+      }
+
+      // const isFinished = document.getElementById('cbt-clock-seconds').hasAttribute('finished');
+      // if (!isFinished) {
+      //   setTimeout(updateCountdown, 1000); // Adjust time as needed
+      // }
+    }
+
+    updateCountdown();
+    const intervalId = setInterval(updateCountdown, 1000);
+
+  </script>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Countdown Bar",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "hide_section",
+      "label": "Hide section",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Section Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#fff"
+    },
+    {
+      "type": "color",
+      "id": "time_bg_color",
+      "label": "Time background color",
+      "default": "#fff"
+    },
+    {
+      "type": "color",
+      "id": "time_text_color",
+      "label": "Time text color",
+      "default": "#000"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p><strong>FLASH SALE 50% OFF ALL PRODUCTS</strong></p>"
+    },
+    {
+      "type": "text",
+      "id": "date_picker",
+      "label": "End date GMT",
+      "default": "11-10-2024",
+      "info": "Must be in GMT+0 to work! Format: mm-dd-yyyy - Example: 7-16-2024"
+    },
+    {
+      "type": "text",
+      "id": "time_picker",
+      "label": "End time GMT",
+      "default": "12:00 PM",
+      "info": "Must be in GMT+0 to work! Format: hh:mm AM/PM - Example: 12:00 PM"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Countdown Bar"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,148 @@
+{% layout none %}
+<div class="modal-overlay"></div>
+  <div class="bm-modal">
+   {% if block.settings.title != blank %}
+      <div class="modal-header">
+          <h2>{{ block.settings.title }}</h2>
+      </div>
+    {% endif %}
+      <div class="modal-inner">
+         <div class="modal-close">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M1 1L13 13" stroke="black" stroke-width="2" />
+        <path d="M13 1L0.999999 13" stroke="black" stroke-width="2" />
+    </svg>
+</div>
+          <div class="modal-image">
+            {% if product.metafields.custom.desktop_size_chart != blank %}
+              <img src="{{ product.metafields.custom.desktop_size_chart | img_url: 'master' }}" class="desktop-chart-img">
+            {% endif %}
+            {% if product.metafields.custom.mobile_size_chart != blank %}
+              <img src="{{ product.metafields.custom.mobile_size_chart | img_url: 'master' }}" class="mobile-chart-img">
+            {% endif  %}
+
+        
+          </div>
+          <div class="upsell_size_chart">
+            {% assign upsell_product_id = product.metafields.custom.upsell_product %}
+            {% if upsell_product_id != blank %}
+             
+            {% assign product = all_products[upsell_product_id] %}
+               {% if product.metafields.custom.desktop_size_chart != blank %}
+              <img src="{{ product.metafields.custom.desktop_size_chart | img_url: 'master' }}" class="desktop-chart-img">
+            {% endif %}
+            {% if product.metafields.custom.mobile_size_chart != blank %}
+              <img src="{{ product.metafields.custom.mobile_size_chart | img_url: 'master' }}" class="mobile-chart-img">
+            {% endif  %}
+            {% endif %}
+          </div>
+      </div>
+  </div> 
+
+{% style %}
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgb(0, 0, 0, .7);
+    overflow-y: auto;
+    display: none;
+    z-index: 9999;
+}
+
+.bm-modal { 
+    max-width: 475px;
+    width: 100%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    z-index: 99999;
+    padding: 40px;
+    background: white;
+    max-height:100vh;
+    overflow:auto;
+}
+
+body.bm-show-modal .modal-overlay, 
+body.bm-show-modal .bm-modal{
+  display: block;
+}
+.modal-header h2 {
+    font-family: 'Visby';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 24px;
+    letter-spacing: 0.135em;
+    text-transform: uppercase;
+    color: #fff;
+    text-align: center;
+    margin: 20px 0;
+}
+.bm-modal .modal-inner {
+    position: relative;
+}
+
+.bm-modal .modal-close{
+    position: absolute;
+    cursor: pointer;
+   font-size: 30px;
+       right: -25px;
+    top: -35px;
+}
+.bm-modal .modal-inner>div:not(.modal-close) {
+    width: 100%;
+    min-height: 100%;
+  padding: 0px;
+}
+
+.bm-modal .modal-inner>div.modal-right {
+    background-color: #fff;
+    padding: 24px;
+}
+
+.bm-modal .modal-inner>div img {
+    width: 100%;
+    height: 100%;
+}
+
+.modal-image .mobile-chart-img {
+    display: none;
+}
+@media (max-width: 767px) {
+  .bm-modal{
+    max-width: 345px;
+  } 
+    .modal-image .desktop-chart-img{
+        display: none;
+    }
+    .modal-image .mobile-chart-img {
+        display: block;
+    }
+    .bm-modal .modal-close{
+          right: -15px;
+          top: -25px;
+    }
+   .bm-modal{
+      padding:20px;
+  }
+}
+{% endstyle %}
+
+{% schema %}
+    {
+  "name": "BM Size Chart Popup",
+  "tag": "section",
+  "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+       }
+  ]  
+}
+{% endschema %}

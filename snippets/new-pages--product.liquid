@@ -1,0 +1,337 @@
+{%- liquid
+assign current_variant = product.selected_or_first_available_variant
+assign compare_at_price = current_variant.compare_at_price
+assign price = current_variant.price
+assign featured_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media
+assign first_3d_model = product.media | where: 'media_type', 'model' | first
+
+assign show_price_comparison = false
+
+if current_variant.compare_at_price > current_variant.price
+assign show_price_comparison = true
+endif
+-%}
+
+{% capture product_heading %}
+{% if show_vendor %}
+<p class="product__vendor overline mt0">{{ product.vendor | link_to_vendor }}</p>
+{% endif %}
+
+<h1 class="product__title type-heading-display mt0 mb1">{{ product.title }}</h1>
+{% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', concierge_install: true, product: product %}
+
+<div class="product__price">
+    <s data-compare-price class="mr1 meta{% if show_price_comparison == false %} hide{% endif %}">
+        {% if show_price_comparison %}
+        {{ current_variant.compare_at_price | money }}
+        {% endif %}
+        <span class="visually-hidden" data-compare-text>{{ 'products.product.regular_price' | t }}</span>
+    </s>
+    <span data-product-price>{{ current_variant.price | money }}</span>
+    {% render 'unit-price' item: current_variant %}
+</div>
+
+<div class="product__reviews hidden mb3">
+    <span class="product__reviews-stars hidden"></span>
+    <a href="#" class="product__reviews-trigger accent"></a>
+</div>
+<div class="bm-product-size mb3">Size: <a class="bm-size-chart"> <svg xmlns="http://www.w3.org/2000/svg" width="18"
+            height="18" viewBox="0 0 18 18" fill="none">
+            <path
+                d="M2.396 13.9076L13.6866 2.61701C13.8741 2.42951 14.1655 2.42951 14.353 2.61701L17.5616 5.82561C17.7491 6.01311 17.7491 6.30451 17.5616 6.49201L6.2912 17.7826C6.1037 17.9701 5.8123 17.9701 5.6248 17.7826L2.3958 14.574C2.2083 14.3865 2.2085 14.0951 2.396 13.9076ZM13.125 4.51161L14.0211 5.40771C14.2086 5.59521 14.2086 5.88661 14.0211 6.07411C13.8336 6.26161 13.5422 6.26161 13.3547 6.07411L12.4586 5.17801L11.7711 5.86551L12.125 6.21941C12.3125 6.40691 12.3125 6.69831 12.125 6.88581C11.9375 7.07331 11.6461 7.07331 11.4586 6.88581L11.1047 6.53191L10.4172 7.21941L11.3133 8.11551C11.5008 8.30301 11.5008 8.59441 11.3133 8.78191C11.1258 8.96941 10.8344 8.96941 10.6469 8.78191L9.7508 7.88581L9.04142 8.59519L9.39532 8.94909C9.58282 9.13659 9.58282 9.42799 9.39532 9.61549C9.20782 9.80299 8.91642 9.80299 8.72892 9.61549L8.37502 9.26159L7.68752 9.94909L8.58362 10.8452C8.77112 11.0327 8.77112 11.3241 8.58362 11.5116C8.39612 11.6991 8.10472 11.6991 7.91722 11.5116L7.02112 10.6155L6.33362 11.303L6.68752 11.6569C6.87502 11.8444 6.87502 12.1358 6.68752 12.3233C6.50002 12.5108 6.20862 12.5108 6.02112 12.3233L5.66722 11.9694L4.97972 12.6569L5.87582 13.553C6.06332 13.7405 6.06332 14.0319 5.87582 14.2194C5.68832 14.4069 5.39692 14.4069 5.20942 14.2194L4.31332 13.3233L3.41722 14.2194L5.95862 16.7608L16.5836 6.13579L14.0212 3.61619L13.125 4.51161ZM12.9375 1.22021L13.5211 1.78271C13.7086 1.97021 13.7086 2.26161 13.5211 2.44911C13.3336 2.63661 13.0422 2.63661 12.8547 2.44911L12.6258 2.22021L2 12.8452L2.2289 13.0741C2.4164 13.2616 2.4164 13.553 2.2289 13.7405C2.0414 13.928 1.75 13.928 1.5625 13.7405L0.4375 12.6155C0.25 12.428 0.25 12.1366 0.4375 11.9491C0.625 11.7616 0.9164 11.7616 1.1039 11.9491L1.3328 12.178L11.9368 1.57401L11.7079 1.34511C11.5204 1.15761 11.5204 0.866211 11.7079 0.678711C11.8954 0.491211 12.1868 0.491211 12.3743 0.678711L12.9375 1.22021Z"
+                fill="black" />
+        </svg>Size Guide</a></div>
+{% endcapture %}
+
+<section class="
+      product
+      {% if show_thumbnails -%} product--has-thumbs{%- endif %}
+      {% if enable_full_width -%} product--full-width{%- endif %}
+      product--thumbnails-{{ thumbnail_position }}
+      product--thumbnails-{{ thumbnail_size }}
+    " data-section-id="{{ section.id }}" data-section-type="product" data-product="{{ product.title | handle }}">
+    {% if product.media.size > 0 and product.media[0].media_type == 'image' %}
+    <div class="product__media-action">
+        <button type="button" class="product__media-action-button">
+            {% render 'icon-plus' %}
+        </button>
+    </div>
+    {% endif %}
+
+    <div class="product__mobile-header">
+        {{ product_heading }}
+    </div>
+
+    <div class="c-product__media-container product__media-container">
+        {%- if show_thumbnails and thumbnail_position == 'vertical' -%}
+        {% render 'product-thumbnails' with featured_media: featured_media %}
+        {%- endif -%}
+
+        <div class="c-product__media product__media">
+            {% if product.media.size > 0 %}
+            {%- for media in product.media -%}
+            <div class="media-wrapper{% if show_thumbnails and media.id != featured_media.id %} hidden{% endif %}"
+                data-media-id="{{ media.id }}" data-product-media-wrapper>
+                {% render 'media',
+                media: media,
+                featured_media: featured_media,
+                link: product.url,
+                loop_video: enable_video_looping
+                %}
+            </div>
+            {%- endfor -%}
+            {% else %}
+            <div class="product__image">
+                {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+            {% endif %}
+        </div>
+
+        {%- if show_thumbnails and thumbnail_position == 'horizontal' -%}
+        {% render 'product-thumbnails' with featured_media: featured_media %}
+        {%- endif -%}
+    </div>
+
+    {%- if first_3d_model -%}
+    <button aria-label="{{ 'products.product.view_in_space_label' | t }}" class="product__view-in-space bttn bttn--full"
+        data-in-your-space data-shopify-xr data-shopify-model3d-id="{{ first_3d_model.id }}"
+        data-shopify-title="{{ product.title | escape }}" data-shopify-xr-hidden>
+        <span>
+            {% render 'icon-3d' %}
+            <span class="product-single__view-in-space-text">{{ 'products.product.view_in_space' | t }}</span>
+        </span>
+    </button>
+    {%- endif -%}
+
+    <div class="product__meta">
+        <div class="product__meta-inner">
+            <div class="product__header">
+                {{ product_heading }}
+            </div>
+
+            <div class="product__reviews hidden mb3">
+                <span class="product__reviews-stars hidden"></span>
+                <a href="#" class="product__reviews-trigger accent"></a>
+            </div>
+            <div class="bm-product-size mb3">
+                Size:
+                <a class="bm-size-chart">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                        <path
+                            d="M2.396 13.9076L13.6866 2.61701C13.8741 2.42951 14.1655 2.42951 14.353 2.61701L17.5616 5.82561C17.7491 6.01311 17.7491 6.30451 17.5616 6.49201L6.2912 17.7826C6.1037 17.9701 5.8123 17.9701 5.6248 17.7826L2.3958 14.574C2.2083 14.3865 2.2085 14.0951 2.396 13.9076ZM13.125 4.51161L14.0211 5.40771C14.2086 5.59521 14.2086 5.88661 14.0211 6.07411C13.8336 6.26161 13.5422 6.26161 13.3547 6.07411L12.4586 5.17801L11.7711 5.86551L12.125 6.21941C12.3125 6.40691 12.3125 6.69831 12.125 6.88581C11.9375 7.07331 11.6461 7.07331 11.4586 6.88581L11.1047 6.53191L10.4172 7.21941L11.3133 8.11551C11.5008 8.30301 11.5008 8.59441 11.3133 8.78191C11.1258 8.96941 10.8344 8.96941 10.6469 8.78191L9.7508 7.88581L9.04142 8.59519L9.39532 8.94909C9.58282 9.13659 9.58282 9.42799 9.39532 9.61549C9.20782 9.80299 8.91642 9.80299 8.72892 9.61549L8.37502 9.26159L7.68752 9.94909L8.58362 10.8452C8.77112 11.0327 8.77112 11.3241 8.58362 11.5116C8.39612 11.6991 8.10472 11.6991 7.91722 11.5116L7.02112 10.6155L6.33362 11.303L6.68752 11.6569C6.87502 11.8444 6.87502 12.1358 6.68752 12.3233C6.50002 12.5108 6.20862 12.5108 6.02112 12.3233L5.66722 11.9694L4.97972 12.6569L5.87582 13.553C6.06332 13.7405 6.06332 14.0319 5.87582 14.2194C5.68832 14.4069 5.39692 14.4069 5.20942 14.2194L4.31332 13.3233L3.41722 14.2194L5.95862 16.7608L16.5836 6.13579L14.0212 3.61619L13.125 4.51161ZM12.9375 1.22021L13.5211 1.78271C13.7086 1.97021 13.7086 2.26161 13.5211 2.44911C13.3336 2.63661 13.0422 2.63661 12.8547 2.44911L12.6258 2.22021L2 12.8452L2.2289 13.0741C2.4164 13.2616 2.4164 13.553 2.2289 13.7405C2.0414 13.928 1.75 13.928 1.5625 13.7405L0.4375 12.6155C0.25 12.428 0.25 12.1366 0.4375 11.9491C0.625 11.7616 0.9164 11.7616 1.1039 11.9491L1.3328 12.178L11.9368 1.57401L11.7079 1.34511C11.5204 1.15761 11.5204 0.866211 11.7079 0.678711C11.8954 0.491211 12.1868 0.491211 12.3743 0.678711L12.9375 1.22021Z"
+                            fill="black" />
+                    </svg>
+                    Size Guide</a>
+            </div>
+
+            {%
+            render 'product-form' with
+            product: product,
+            show_vendor: show_vendor,
+            current_variant: current_variant,
+            show_dynamic_checkout: enable_payment_button,
+            show_swatches: show_swatches,
+            show_quantity_input: show_quantity_input,
+            %}
+
+            {%- comment -%}
+            Live region for announcing updated price and availability to screen readers
+            {%- endcomment -%}
+            <p class="visually-hidden" data-product-status aria-live="polite" role="status"></p>
+
+            {%- comment -%}
+            Live region for announcing that the product form has been submitted and the
+            product is in the process being added to the cart
+            {%- endcomment -%}
+            <p class="visually-hidden" data-loader-status aria-live="assertive" role="alert" aria-hidden="true">
+                {{ 'products.product.loader_label' | t }}
+            </p>
+
+            {% assign upsell_product_id = product.metafields.custom.upsell_product %}
+            {% assign upsell_product = all_products[upsell_product_id] %}
+            {% assign upsell_product_description = product.metafields.custom.upsell_product_description %}
+
+
+            {% if upsell_product != blank %}
+            <div class="pdp-matching-product-container" data-section-id="upsell-product-new"
+                data-section-type="featured-product">
+                <h2 class="pdp-matching-product-heading">{{ pdp-matching-product-heading }}</h2>
+                <div class="pdp-matching-product-details">
+                    <a href="{{ upsell_product.url }}" class="pdp_upsell_product_url">
+                        <div class="pdp-image-section">
+                            <img src="{{ upsell_product.images.first | img_url: '300x300' }}" alt="Product Image">
+                        </div>
+                    </a>
+                    <div class="pdp-content-section">
+                        <h2 class="pdp-product-heading">{{ upsell_product.title }}</h2>
+                        <p class="pdp-product-description">{{ upsell_product_description | metafield_tag }}</p>
+                        <div class="pdp-product-details">
+                            <p class="pdp-product-price">{{ upsell_product.price | money }}</p>
+
+                            <!-- dummy atc -->
+                            <button type="submit" name="add" aria-label="Add to cart" class="bttn bm-atc">Add to
+                                cart</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- upsell product overlay and size varient  -->
+                <div class="upsell-modal-overlay"></div>
+                <div class="varient-popup">
+                    <div class="bm-product-size mb3">
+                        Size:
+                        <a class="upsel-size-chart">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" viewBox="0 0 20 21"
+                                fill="none">
+                                <path
+                                    d="M3.396 14.9076L14.6866 3.61701C14.8741 3.42951 15.1655 3.42951 15.353 3.61701L18.5616 6.82561C18.7491 7.01311 18.7491 7.30451 18.5616 7.49201L7.2912 18.7826C7.1037 18.9701 6.8123 18.9701 6.6248 18.7826L3.3958 15.574C3.2083 15.3865 3.2085 15.0951 3.396 14.9076ZM14.125 5.51161L15.0211 6.40771C15.2086 6.59521 15.2086 6.88661 15.0211 7.07411C14.8336 7.26161 14.5422 7.26161 14.3547 7.07411L13.4586 6.17801L12.7711 6.86551L13.125 7.21941C13.3125 7.40691 13.3125 7.69831 13.125 7.88581C12.9375 8.07331 12.6461 8.07331 12.4586 7.88581L12.1047 7.53191L11.4172 8.21941L12.3133 9.11551C12.5008 9.30301 12.5008 9.59441 12.3133 9.78191C12.1258 9.96941 11.8344 9.96941 11.6469 9.78191L10.7508 8.88581L10.0414 9.59519L10.3953 9.94909C10.5828 10.1366 10.5828 10.428 10.3953 10.6155C10.2078 10.803 9.91642 10.803 9.72892 10.6155L9.37502 10.2616L8.68752 10.9491L9.58362 11.8452C9.77112 12.0327 9.77112 12.3241 9.58362 12.5116C9.39612 12.6991 9.10472 12.6991 8.91722 12.5116L8.02112 11.6155L7.33362 12.303L7.68752 12.6569C7.87502 12.8444 7.87502 13.1358 7.68752 13.3233C7.50002 13.5108 7.20862 13.5108 7.02112 13.3233L6.66722 12.9694L5.97972 13.6569L6.87582 14.553C7.06332 14.7405 7.06332 15.0319 6.87582 15.2194C6.68832 15.4069 6.39692 15.4069 6.20942 15.2194L5.31332 14.3233L4.41722 15.2194L6.95862 17.7608L17.5836 7.13579L15.0212 4.61619L14.125 5.51161ZM13.9375 2.22021L14.5211 2.78271C14.7086 2.97021 14.7086 3.26161 14.5211 3.44911C14.3336 3.63661 14.0422 3.63661 13.8547 3.44911L13.6258 3.22021L3 13.8452L3.2289 14.0741C3.4164 14.2616 3.4164 14.553 3.2289 14.7405C3.0414 14.928 2.75 14.928 2.5625 14.7405L1.4375 13.6155C1.25 13.428 1.25 13.1366 1.4375 12.9491C1.625 12.7616 1.9164 12.7616 2.1039 12.9491L2.3328 13.178L12.9368 2.57401L12.7079 2.34511C12.5204 2.15761 12.5204 1.86621 12.7079 1.67871C12.8954 1.49121 13.1868 1.49121 13.3743 1.67871L13.9375 2.22021Z"
+                                    fill="black" />
+                            </svg>
+                            Size Guide
+                        </a>
+                    </div>
+                    {%render 'upsell-product',
+                    product: product
+                    %}
+                </div>
+                <!-- upsell product overlay and size varient en  -->
+
+
+            </div>
+
+            <div class="pdp_upsell_produt"></div>
+          {% endif %}
+            <div class="product__description mt5 rte">
+                {{ product.description }}
+            </div>
+
+            {% if show_share_buttons %}
+            <div
+                class="product__social-sharing{% if product.description contains 'accordion__group' %} hidden{% endif %}">
+                {% render 'social-sharing',
+                share_title: product.title,
+                share_permalink: product.url,
+                share_image: product.featured_media
+                %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {%- assign images = product.media | where: 'media_type', 'image' -%}
+    {% render 'lightbox' with images: images %}
+    {% render 'reviews-drawer' with product: product %}
+</section>
+
+{% unless product == empty %}
+<script type="application/json" id="ProductJson-{{ section.id }}">
+      {{ product | json }}
+    </script>
+<script type="application/json" id="ModelJson-{{ section.id }}">
+      {{ product.media | where: 'media_type', 'model' | json }}
+    </script>
+{% endunless %}
+
+<style>
+    .pdp-matching-product-container .pdp-matching-product-details {
+        display: flex;
+        width: 100%;
+    }
+
+    .pdp_upsell_product_url {
+        width: 30%;
+    }
+
+    .pdp-matching-product-container .pdp-image-section {
+        width: 100%;
+        height: 100%;
+    }
+
+    .pdp-matching-product-container .pdp-image-section img {
+        width: 100%;
+        vertical-align: middle;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .pdp-matching-product-container .pdp-content-section {
+        padding: 10px;
+        background: #eef7fb;
+        padding-left: 16px;
+        padding-right: 16px;
+        width: 70%;
+    }
+
+    .pdp-matching-product-container .pdp-matching-product-heading {
+        color: #142a4a;
+        font-family: Roboto Slab;
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+        margin-bottom: 12px;
+        margin-top: 0px;
+    }
+
+    .pdp-matching-product-container {
+        margin-top: 27px;
+    }
+
+    .pdp-matching-product-container .pdp-product-heading {
+        margin-top: 0px;
+        color: #142a4a;
+        font-family: Roboto Slab;
+        font-size: 18px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+        margin-bottom: 0px;
+    }
+
+    .pdp-matching-product-container .pdp-product-description {
+        margin-top: 4px;
+        color: #142a4a;
+        font-family: Montserrat;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 150%;
+    }
+
+    .pdp-matching-product-container .pdp-product-details {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .pdp-matching-product-container .pdp-product-price {
+        margin: 0px;
+        color: #142a4a;
+        font-family: Montserrat;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 150%;
+    }
+
+    .pdp-matching-product-container .pdp-product-button {
+        display: flex;
+        width: 138px;
+        height: 36px;
+        padding: 10px;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        background: #4ee5e6;
+        color: #142a4a;
+        font-family: Montserrat;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 150%;
+    }
+
+    .product-form__option-label {
+        display: none;
+    }
+</style>

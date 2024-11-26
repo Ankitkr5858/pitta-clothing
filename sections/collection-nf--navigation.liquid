@@ -1,0 +1,72 @@
+{% if section.blocks.size > 0 %}
+  <section
+    data-section-id="{{ id }}"
+    data-section-type="collection"
+    class="new-collection-navigation"
+  >
+    <div class="collection__container">
+      <div class="navigation-slider">
+        <div class="navigation-items">
+          {% for block in section.blocks %}
+            {% if block.type == 'collection_picker' %}
+              <div class="collection-item">
+                <a href="{% if block.settings.collection_url != blank %}{{ block.settings.collection_url }}{% else %}{{ block.settings.selected_collection.url }}{% endif %}">
+                  <img
+                    src="{% if block.settings.image != blank %}{{ block.settings.image | product_img_url: 'medium' }}{% else %}{{ block.settings.selected_collection.image | product_img_url: 'medium' }}{% endif %}"
+                    alt="{% if block.settings.image != blank %}{{ block.settings.image.alt }}{% else %}{{ block.settings.selected_collection.title }}{% endif %}"
+                    class="collection-image"
+                  >
+                  {% if block.settings.tag != blank %}
+                    <span class="collection-tag">{{block.settings.tag}}</span>
+                  {% endif %}
+                  <h3 class="type-heading-1 collection-name">{% if block.settings.title != blank %}{{ block.settings.title }}{% else %}{{ block.settings.selected_collection.title }}{% endif %}</h3>
+                </a>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Collection Navigation",
+  "class": "bm-collection-nf-navigation",
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "type": "collection_picker",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "label": "Select Collection",
+          "id": "selected_collection"
+        },
+        {
+          "type": "text",
+          "label": "Collection Title",
+          "id": "title"
+        },
+        {
+          "type": "text",
+          "label": "Collection Tag",
+          "id": "tag"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Collection Image"
+        },
+        {
+          "type": "url",
+          "label": "Collection Url",
+          "id": "collection_url"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

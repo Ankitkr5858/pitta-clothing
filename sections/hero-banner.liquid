@@ -1,0 +1,372 @@
+<div class="banner-section section">
+  <div class="banner-inner">
+    <div class="banner-text-container">
+      <div class="banner-text-inner">
+        <div class="review">
+          <img src="{{ section.settings.review_image | img_url: 'master' }}" alt="">
+          <span>{{ section.settings.review_text }}</span>
+        </div>
+        <h2 class="text-block__heading type-heading-1 ma0 mb3">
+          {{ section.settings.main_heading }}
+        </h2>
+        <div class="banner-description">{{ section.settings.description }}</div>
+        <a class="text-block__button bttn bttn--secondary bttn--inline mt4" href="{{ section.settings.link }}">
+          {{ section.settings.button_text }}
+        </a>
+      </div>
+      <div class="banner-logos">
+        <span>As Seen In</span>
+        {% for block in section.blocks %}
+          <div class="logo">
+            <img src="{{ block.settings.logo_image | img_url: 'master' }}" alt="">
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="banner-image">
+      <img src="{{ section.settings.banner_image | img_url: 'master' }}" alt="">
+    </div>
+  </div>
+</div>
+
+{% style %}
+  .hero-banner {
+    padding-top: 71px;
+  }
+
+  .banner-section {
+    position: relative;
+  }
+
+  .banner-image {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  .hero-banner .banner-inner {
+    display: flex;
+    align-items: center;
+    flex-direction: {{ section.settings.flex_direction }};
+    justify-content: space-between;
+  }
+
+  .banner-text-container {
+    max-width: 50%;
+  }
+
+  .banner-image {
+    max-width: 50%;
+  }
+
+  .banner-image img {
+    width: 100%;
+    display: block;
+  }
+
+  .review img {
+    max-width: {{ section.settings.review_image_width }}px;
+  }
+
+  .banner-logos {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    padding-top: 48px;
+  }
+
+  .banner-logos .logo {
+    max-width: 100px;
+    display: flex;
+  }
+
+  .banner-logos .logo img {
+    width: 100%;
+  }
+
+  .banner-logos span {
+    color: #142A4A;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 150%;
+  }
+
+  .banner-text-inner .review {
+    display: flex;
+    align-items: center;
+  }
+
+  .banner-text-inner .review span {
+    font-size: {{ section.settings.review_font_size }}px;
+    color: #142A4A;
+    font-weight: 400;
+    line-height: 150%;
+    padding-left: 8px;
+  }
+
+  .banner-text-inner h2 {
+    font-size: {{ section.settings.heading_font_size }}px;
+    color: {{ section.settings.heading_color }};
+    font-weight: 700;
+    line-height: 56px;
+  }
+
+  .banner-description {
+    font-size: {{ section.settings.desc_font_size }}px;
+    font-weight: 500;
+    line-height: 28px;
+  }
+
+  .banner-text-inner a {
+    font-size: {{ section.settings.button_font_size }}px;
+    padding: 0 40px;
+    font-weight: 600;
+    line-height: 24px;
+  }
+
+  @media (max-width: 60em) {
+    .banner-section {
+      padding: 0 0 24px 0 !important;
+    }
+    
+    .hero-banner .banner-inner {
+      flex-direction: {{ section.settings.flex_direction_mob }};
+    }
+
+    .banner-text-container {
+      max-width: 100%;
+      padding: 20px;
+    }
+
+    .banner-image {
+      position: inherit;
+      max-width: 100%;
+    }
+
+    .review span {
+      font-size: {{ section.settings.review_font_size_mob }}px;
+    }
+
+    .banner-text-inner h2 {
+      font-size: {{ section.settings.heading_font_size_mob }}px;
+      font-weight: 700;
+      line-height: 48px;
+      letter-spacing: 0.4px;
+      color: {{ section.settings.heading_color }};
+    }
+
+    .banner-description {
+      font-size: {{ section.settings.desc_font_size_mob }}px;
+    }
+
+    .banner-text-inner a {
+      font-size: {{ section.settings.button_font_size_mob }}px;
+    }
+
+    .banner-logos .logo {
+      max-width: 80px;
+    }
+
+    .banner-logos {
+      gap: 30px;
+      padding-top: 28px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .banner-text-inner a {
+      display: flex;
+    }
+  }
+
+  @media (min-width: 992px) {
+    .banner-image img {
+      width: 100%;
+      object-position: center;
+      vertical-align: middle;
+      object-fit: contain;
+      height: 100%;
+    }
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Banner Section",
+  "class": "hero-banner",
+  "settings": [
+    {
+      "id": "flex_direction",
+      "type": "select",
+      "label": "Flip Direction",
+      "options": [
+        { "value": "row", "label": "Row" },
+        { "value": "row-reverse", "label": "Reverse Row" },
+        { "value": "column", "label": "Column" },
+        { "value": "column-reverse", "label": "Reverse Column" }
+      ],
+      "default": "row"
+    },
+    {
+      "id": "flex_direction_mob",
+      "type": "select",
+      "label": "Flip Direction Mobile",
+      "options": [
+        { "value": "row", "label": "Row" },
+        { "value": "row-reverse", "label": "Reverse Row" },
+        { "value": "column", "label": "Column" },
+        { "value": "column-reverse", "label": "Reverse Column" }
+      ],
+      "default": "column-reverse"
+    },
+    {
+      "id": "review_image",
+      "type": "image_picker",
+      "label": "Review Image"
+    },
+    {
+      "id": "review_image_width",
+      "type": "range",
+      "label": "Review Image Width",
+      "default": 50,
+      "min": 0,
+      "max": 100
+    },
+    {
+      "id": "review_text",
+      "type": "text",
+      "label": "Review Text"
+    },
+    {
+      "id": "review_font_size",
+      "type": "range",
+      "label": "Review Font Size (Desktop)",
+      "default": 18,
+      "min": 12,
+      "max": 48
+    },
+    {
+      "id": "review_font_size_mob",
+      "type": "range",
+      "label": "Review Font Size (Mobile)",
+      "default": 16,
+      "min": 12,
+      "max": 36
+    },
+    {
+      "id": "review_color",
+      "type": "color",
+      "label": "Review Color"
+    },
+
+    {
+      "id": "main_heading",
+      "type": "text",
+      "label": "Main Heading"
+    },
+    {
+      "id": "heading_font_size",
+      "type": "range",
+      "label": "Heading Font Size (Desktop)",
+      "default": 18,
+      "min": 12,
+      "max": 48
+    },
+    {
+      "id": "heading_font_size_mob",
+      "type": "range",
+      "label": "Heading Font Size (Mobile)",
+      "default": 16,
+      "min": 12,
+      "max": 48
+    },
+    {
+      "id": "heading_color",
+      "type": "color",
+      "label": "Heading Color"
+    },
+    {
+      "id": "description",
+      "type": "richtext",
+      "label": "Banner Description"
+    },
+    {
+      "id": "desc_font_size",
+      "type": "range",
+      "label": "Description Font Size (Desktop)",
+      "default": 18,
+      "min": 12,
+      "max": 48
+    },
+    {
+      "id": "desc_font_size_mob",
+      "type": "range",
+      "label": "Description Font Size (Mobile)",
+      "default": 16,
+      "min": 12,
+      "max": 36
+    },
+    {
+      "id": "desc_color",
+      "type": "color",
+      "label": "Heading Color"
+    },
+    {
+      "id": "button_text",
+      "type": "text",
+      "label": "Button Text"
+    },
+    {
+      "id": "button_font_size",
+      "type": "range",
+      "label": "Button Font Size (Desktop)",
+      "default": 18,
+      "min": 12,
+      "max": 48
+    },
+    {
+      "id": "button_font_size_mob",
+      "type": "range",
+      "label": "Button Font Size (Mobile)",
+      "default": 16,
+      "min": 12,
+      "max": 36
+    },
+    {
+      "id": "button_color",
+      "type": "color",
+      "label": "Button Color"
+    },
+    {
+      "id": "link",
+      "type": "url",
+      "label": "Button Link"
+    },
+    {
+      "id": "banner_image",
+      "type": "image_picker",
+      "label": "Banner Image"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logos",
+      "name": "Logos",
+      "settings": [
+        {
+          "id": "logo_image",
+          "type": "image_picker",
+          "label": "Logo Image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banner Section",
+      "category": "Sections"
+    }
+  ]
+}
+{% endschema %}

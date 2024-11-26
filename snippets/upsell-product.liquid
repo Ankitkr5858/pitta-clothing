@@ -1,0 +1,26 @@
+
+
+{% assign upsell_product_id = product.metafields.custom.upsell_product %}
+{% assign upsell_product = all_products[upsell_product_id] %}
+
+{% comment %} data-section-id="new-product--upsell" data-section-type="product" {% endcomment %}
+
+    {%  assign current_variant = upsell_product.selected_or_first_available_variant %}
+    <div class="new-product-form-var">
+      {%
+        render 'product-form' with
+        product: upsell_product,
+        show_vendor: show_vendor,
+        current_variant: current_variant,
+        show_dynamic_checkout: enable_payment_button,
+        show_swatches: show_swatches,
+        show_quantity_input: show_quantity_input,
+      %}
+    </div>
+
+
+
+   
+
+
+

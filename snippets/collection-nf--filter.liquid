@@ -1,0 +1,114 @@
+{% if show_filters %}
+  {%- assign prefix = '' -%}
+  {%- assign form_class = 'form--sidebar' -%}
+  {%- if drawer -%}
+    {%- assign prefix = 'drawer_' -%}
+    {%- assign form_class = 'form--drawer' -%}
+  {%- endif -%}
+
+  <form class="{{form_class}}" data-collection-filter-form>
+    {%- for filter in collection.filters -%}
+      <div class="sidebar__filter">
+        <div class="filter__label">
+          <span>{{ filter.label }}</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10">
+            <path d="M.357 2.753l4.39 4.39a.357.357 0 0 0 .506 0l4.39-4.39" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></path>
+          </svg>
+        </div>
+  
+        {%- case filter.type -%}
+          {%- when 'list' -%}
+            <ul class="filter__item {{filter.label | handleize}}">
+              {%- for filter_value in filter.values -%}
+                <li>
+                  <label for="{{-prefix-}}Filter-{{ filter.param_name }}-{{ forloop.index }}">
+                    <input type="checkbox"
+                      name="{{ filter_value.param_name }}"
+                      value="{{ filter_value.value }}"
+                      id="{{-prefix-}}Filter-{{ filter.param_name }}-{{ forloop.index }}"
+                      {% if filter_value.active -%}checked{%- endif %}
+                      {% if filter_value.count == 0 and filter_value.active == false -%}disabled{%- endif %}
+                    >
+                    {%- case filter_value.display.type -%}
+                      {%- when 'image' -%}
+                        <span>
+                          {{
+                            filter_value.display.value
+                            | image_url: width: 48
+                            | image_tag: alt: filter_value.display.value.alt
+                          }}
+                        </span>
+                      {%- when 'colors' -%}
+                        {%- comment -%} Color swatch support - required development {%- endcomment -%}
+                    {%- endcase -%}
+
+                    {% if filter.param_name contains 'availability' %}
+                      <span class="label">
+                        <span>{{ filter_value.label }}</span>
+                        <span>({{ filter_value.count }})</span>
+                      </span>
+                    {% else %}
+                      <span class="label">{{ filter_value.label }}</span>
+                    {% endif %}
+                  </label>
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- when 'boolean' -%}
+            {%- comment -%} Boolean checkbox supported - required development {%- endcomment -%}
+          {%- when 'price_range' -%}
+            {%- comment -%} Price range supported - required development {%- endcomment -%}
+        {%- endcase -%}
+      </div>
+    {%- endfor -%}
+    
+    {%- comment -%} Sort by {%- endcomment -%}
+    <div class="sidebar__filter">
+      <div class="filter__label">
+        <span>Sort</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10">
+          <path d="M.357 2.753l4.39 4.39a.357.357 0 0 0 .506 0l4.39-4.39" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></path>
+        </svg>
+      </div>
+      
+      <ul class="filter__item sort-by">
+        {% for option in collection.sort_options %}
+          {%- assign is_active = false -%}
+          {%- if option.value == collection.sort_by -%}
+            {%- assign is_active = true -%}
+          {%- endif -%}
+
+          {% if option.value == 'best-selling' or option.value contains 'price' or option.value == 'created-descending'  %}
+            <li>
+              <label for="{{-prefix-}}Filter-sort_by-{{ forloop.index }}">
+              <input type="radio"
+                name="sort_by"
+                value="{{ option.value | handle }}"
+                id="{{-prefix-}}Filter-sort_by-{{ forloop.index }}"
+                {% if is_active -%}checked{%- endif %}
+              >
+                <span class="label">
+                  {% if option.value contains 'created-descending' %}
+                    New Arrivals
+                  {% else %}
+                    {{ option.name }}
+                  {% endif %}
+                </span>
+              </label>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  
+    {% if drawer %}
+      <div class="sidebar__cta">
+        <span>{{collection.products_count}} Results</span>
+        <div>
+          <input type="reset" value="CLEAR ALL">
+          <input type="submit" value="APPLY">
+        </div>
+      </div>
+    {% endif %}
+  </form>
+{% endif %}

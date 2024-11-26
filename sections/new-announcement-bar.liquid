@@ -1,0 +1,302 @@
+<div class="anouncement-bar">
+  <div class="anouncement-bar-main" style="background-color: {{ section.settings.background_color }};color: {{ section.settings.text_color }};">
+    <div class="anouncement-social-content">
+      {%- if section.settings.announcement_bar_social -%}
+          <div class="anouncement-social">
+            {%- assign social_icons_in_use = false -%}
+      
+            {%- assign social_accounts = 'Facebook, Twitter, Pinterest, Instagram, Snapchat, Tumblr, YouTube, Vimeo,' | split: ', ' -%}
+            {%- for social in social_accounts -%}
+              {%- assign social_handle = social | handleize -%}
+              {% capture social_link %}social_{{ social_handle }}_link{% endcapture %}
+              {%- if settings[social_link] != blank -%}
+                {%- assign social_icons_in_use = true -%}
+              {%- endif -%}
+            {%- endfor -%}
+      
+      
+            {%- if social_icons_in_use -%}
+              <div class="footer__social-icons">
+                {%- render 'social-icons' -%}
+              </div>
+            {%- endif -%}
+          </div>
+          {%- endif -%}
+    </div>
+    <div class="anouncement-content">
+      {%- if section.settings.link != blank -%}
+            <a class="color-inherit" href="{{ section.settings.link }}">
+              {{ section.settings.text | escape }}
+            </a>
+          {%- else -%}
+            {{ section.settings.text | escape }}
+          {%- endif -%}
+    </div>
+    {%- if section.settings.announcement_bar_currency -%}
+  <div class="anouncement-currency">
+  {% liquid
+    assign currency_selector = false
+    if show_currency_selector and shop.enabled_currencies.size > 1
+      assign currency_selector = true
+    endif
+  %}
+<section
+  data-component="header"
+  data-section-id="{{ id }}"
+  data-section-type="header"
+  class="{% unless header_is_transparent %}bg-base {% endunless %} w-100 z-5"
+  data-navigation='
+    [
+      {%- for link in links -%}
+        {
+          "active": "{{ link.active }}",
+          "child_active": "{{ link.child_active }}",
+          "current": "{{ link.current }}",
+          "child_current": "{{ link.child_current }}",
+          "levels": "{{ link.levels }}",
+          "links": [
+            {%- for child in link.links -%}
+              {
+                "active": "{{ child.active }}",
+                "child_active": "{{ child.child_active }}",
+                "current": "{{ child.current }}",
+                "child_current": "{{ child.child_current }}",
+                "levels": "{{ child.levels }}",
+
+                  "links": [
+                    {%- for grandchild in child.links -%}
+                      {
+                        "active": "{{ grandchild.active }}",
+                        "child_active": "{{ grandchild.child_active }}",
+                        "current": "{{ grandchild.current }}",
+                        "child_current": "{{ grandchild.child_current }}",
+                        "levels": "{{ grandchild.levels }}",
+                        "title": "{{ grandchild.title | escape }}",
+                        "type": "{{ grandchild.type }}",
+                        "url": "{{ grandchild.url }}"
+                      }
+                      {% if forloop.last == false %},{% endif %}
+                    {%- endfor -%}
+                  ],
+                "title": "{{ child.title | escape }}",
+                "type": "{{ child.type }}",
+                "url": "{{ child.url }}"
+              }
+              {% if forloop.last == false %},{% endif %}
+            {%- endfor -%}
+          ],
+          "title": "{{ link.title | escape }}",
+          "type": "{{ link.type }}",
+          "url": "{{ link.url }}"
+        }
+
+        {% if forloop.last == false %},{% endif %}
+      {%- endfor -%}
+    ]
+  '
+>
+  <div
+    id="header"
+    class="header {{ modifiers }}"
+    data-transparent-header="{{ header_is_transparent }}"
+  >
+  <div class="header__content">
+    <div class="flex bm-hidden justify-between menu-main w-100" data-primary-navigation="yes">
+      <nav class="header__nav">
+        {%
+          render 'navmenu' with
+          menu: menu,
+          depth: 1,
+          max_depth: 3,
+          blocks: section.blocks,
+          top_level: true,
+          has_triggers: true
+        %}
+      </nav>
+
+      <div class="mobile-nav bm-hidden">
+        <a href="#" id="mobile-nav" class="mobile-nav__trigger">
+          <div class="header__menu-icon">
+            {% render 'icon-menu' %}
+          </div>
+        </a>
+      </div>
+      <div class="header__icon-wrapper">
+        <ul class="header__icon-list">
+       
+            <li class="header__icon header__icon--currency">
+              {% render 'header-currency-selector' %}
+            </li>
+     
+          <li class="header__icon header__icon--search bm-hidden">
+            <noscript>
+            <a href="{{ routes.search_url }}" class="color-inherit">
+              <div class="relative">
+                {{ 'layout.navigation.search' | t }}
+              </div>
+            </a>
+            </noscript>
+            {% render 'quick-search' %}
+          </li>
+        </ul>            
+      </div>
+    </div>
+  </div>
+  </div>
+
+</section>
+</div>
+{%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "New-Announcement bar",
+    "class": "announcement-bar-section",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "announcement_bar_enabled",
+        "label": "Show announcement",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "announcement_bar_social",
+        "label": "Show Social",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "announcement_bar_currency",
+        "label": "Show Currency Selector",
+        "default": true
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background color"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text color",
+        "default": "#ffffff"
+      },
+      {
+            "type": "text",
+            "id": "text",
+            "label": "Announcement text",
+            "default": "Announce something here"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "Announcement link",
+            "info": "Optional"
+          }
+    ],
+    "blocks": [
+      {
+        "type": "announcement",
+        "name": "Announcement",
+        "settings": [
+          {
+            "type": "text",
+            "id": "text",
+            "label": "Announcement text",
+            "default": "Announce something here"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "Announcement link",
+            "info": "Optional"
+          }
+        ]
+      }
+    ],
+    "default": {
+      "blocks": [
+        {
+          "type": "announcement",
+          "settings": {
+            "text": "Announce something here"
+          }
+        }
+      ]
+    }
+  }
+{% endschema %}
+
+{% style %}
+.anouncement-bar-main {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 40px;
+    align-items: center;
+}
+.announcement-bar__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+button.disclosure__toggle {
+    background: none;
+    font-family: Montserrat;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 20px;
+    text-align: left;
+    color: #fff;
+}
+.currency__icon .header__icon.header__icon--currency {
+    display: block;
+}
+.anouncement-currency div#header {
+    box-shadow: none;
+    padding: 0;
+      background: {{ section.settings.background_color }};
+}
+.anouncement-currency .header__content {
+    padding: 0;
+    background: none;
+}
+.anouncement-currency button.disclosure__toggle {
+    color: {{ section.settings.text_color }} !important;
+}
+.anouncement-currency .header .disclosure__toggle:hover, .anouncement-currency .header .disclosure__toggle:focus {
+    opacity: 1;
+}
+.anouncement-currency .header .disclosure-list {
+    right: 0;
+    background: #fff;
+}
+div#shopify-section-announcement-bar {
+    display: none;
+}
+@media (min-width: 768px) {
+  div#header {
+    z-index: 2;
+  }
+}
+
+
+  
+  @media (max-width: 767px) {
+    .announcement-bar-section {
+    display: none;
+    }
+    /* .announcement-bar .announcement-bar__content a {
+    font-family: Montserrat;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    letter-spacing: 0em;
+    text-align: center;
+  }
+  */
+  }
+{% endstyle %}

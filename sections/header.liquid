@@ -1,0 +1,802 @@
+{% render 'frame--header' with
+  id: section.id,
+  detect_menu_length: section.settings.detect_menu_length,
+  header_style: section.settings.header_style,
+  nav_alignment: section.settings.nav_alignment,
+  logo: section.settings.logo,
+  logo_max_size: section.settings.logo_max_size,
+  menu: section.settings.menu,
+  transparent_index_header_enabled: section.settings.transparent_index_header_enabled,
+  transparent_logo: section.settings.transparent_logo,
+  transparent_header_foreground_color: section.settings.transparent_header_foreground_color,
+  transparent_header_border_color: section.settings.transparent_header_border_color,
+  transparent_header_border_opacity: section.settings.transparent_header_border_opacity,
+  show_locale_selector: section.settings.show_locale_selector,
+  show_currency_selector: section.settings.show_currency_selector,
+  blocks: section.blocks
+%}
+
+{% render 'drawer-menu' with
+  menu: section.settings.menu,
+  logo: section.settings.logo,
+  logo_max_size: section.settings.logo_max_size,
+%}
+<script>
+  (function() {
+    function waitForjQuery(trigger, delayInterval, delayTimeout) {
+      var intervalForjQuery = setInterval(function() {
+        if (typeof window.jQuery != 'undefined') {
+          clearInterval(intervalForjQuery);
+          trigger();
+        }
+      }, delayInterval);
+      var timeoutForjQuery = setTimeout(function() {
+        clearInterval(intervalForjQuery);
+      }, delayTimeout);
+    }
+
+    waitForjQuery(function() {
+      var $ = window.jQuery;
+      $(document).ready(function() {
+
+        $('.nav__submenu').each(function() {
+          if($(this).find('.submenu-slider').hasClass('nav--depth-3')){
+              $(this).addClass('nav-submenu-new')
+          }
+        });
+
+
+        var swiper = new Swiper(".submenu-slider", {
+          slidesPerView: 8.2,
+          spaceBetween: 15,
+          pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+          },
+          navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+          },
+        });
+
+      });
+    }, 50, 10000);
+  })();
+</script>
+
+{% schema %}
+  {
+    "name": "Header",
+    "class": "header-section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Header"
+      },
+      {
+        "type": "select",
+        "id": "header_style",
+        "label": "Header style",
+        "options": [
+          { "value": "default", "label": "Inline links" },
+          { "value": "always-mobile", "label": "Menu icon" }
+        ],
+        "default": "default"
+      },
+   
+  {
+    "type": "header",
+    "content": "Mobile Star Block"
+  },
+  {
+    "type": "color",
+    "label": "Background Color",
+    "id": "backgroundColor"
+  },
+  {
+    "type": "image_picker",
+    "label": "Image Star",
+    "id": "imageSrc"
+  },
+  {
+    "type": "range",
+    "label": "Font Size (in pixels)",
+    "id": "fontSize",
+    "default": 16,
+    "min": 12,
+    "max": 24
+  },
+  {
+    "type": "color",
+    "label": "Text Color",
+    "id": "textColor"
+  },
+  {
+    "type": "richtext",
+    "label": "Review Text",
+    "id": "reviewText"
+  },
+  {
+    "type": "text",
+    "label": "Customer Name",
+    "id": "name"
+  },
+        {
+    "type": "range",
+    "label": "Font Size  Name (in pixels)",
+    "id": "fontSize_name",
+    "default": 16,
+    "min": 12,
+    "max": 24
+  },
+  {
+    "type": "color",
+    "label": "Text Color Name",
+    "id": "textColor_name"
+  },
+
+      {
+        "type": "select",
+        "id": "nav_alignment",
+        "label": "Navigation alignment",
+        "options": [
+            { "value": "left", "label": "Left"},
+            { "value": "center", "label": "Center"},
+            { "value": "right", "label": "Right"}
+        ],
+        "default": "left",
+        "info": "Alignment will only apply if Header style is Inline links"
+      },
+      {
+        "type": "checkbox",
+        "id": "detect_menu_length",
+        "label": "Enable menu length detection",
+        "default": false,
+        "info": "Switches the menu style to the Menu icon if the menu exceeds the width of the container."
+      },
+      {
+        "type": "header",
+        "content": {
+          "da": "Sprogvælger",
+          "de": "Sprachauswahl",
+          "en": "Language Selector",
+          "es": "Selector de idioma",
+          "fi": "Kielenvalitsin",
+          "fr": "Sélecteur de langue",
+          "hi": "भाषा चयनकर्ता",
+          "it": "Selettore lingua",
+          "ja": "言語セレクター",
+          "ko": "언어 선택기",
+          "nb": "Språkvelger",
+          "nl": "Taalkiezer",
+          "pt-BR": "Seletor de idiomas",
+          "pt-PT": "Seletor de Idioma",
+          "sv": "Språkväljare",
+          "th": "ตัวเลือกภาษา",
+          "zh-CN": "语言选择器",
+          "zh-TW": "語言選擇器"
+        },
+        "info": {
+          "da": "Du kan tilføje et sprog ved at gå til dine [sprogindstillinger.](/admin/settings/languages)",
+          "de": "Gehen Sie zu Ihren [Spracheinstellungen](/admin/settings/languages), um eine Sprache hinzuzufügen.",
+          "en": "To add a language, go to your [language settings.](/admin/settings/languages)",
+          "es": "Para agregar un idioma, ve a tu[configuración de idioma](/admin/settings/languages)",
+          "fi": "Lisää kieli siirtymällä [kieliasetuksiin.](/admin/settings/languages)",
+          "fr": "Pour ajouter une langue, allez dans vos [paramètres de langue.](/admin/settings/languages).",
+          "hi": "भाषा जोड़ने के लिए, अपने [language settings.](/admin/settings/languages) पर जाएं",
+          "it": "Per aggiungere una lingua, vai su [impostazioni della lingua.](/admin/settings/languages)",
+          "ja": "言語を追加するには、[言語設定](/admin/settings/languages) に移動します。",
+          "ko": "언어를 추가하려면 [언어 설정.](/admin/settings/languages)(으)로 이동하십시오.",
+          "nb": "For å legge til et språk, går du til dine [språkinnstillinger.](/admin/settings/languages)",
+          "nl": "Ga naar uw [taalinstellingen.](/admin/settings/languages) om een taal toe te voegen.",
+          "pt-BR": "Para adicionar um idioma, acesse suas [configurações de idioma. ](/admin/settings/languages)",
+          "pt-PT": "Para adicionar um idioma, aceda a [definições de idioma.](/admin/settings/languages)",
+          "sv": "För att lägga till ett språk, gå till dina [språkinställningar.](/admin/settings/languages)",
+          "th": "หากต้องการเพิ่มภาษา ให้ไปที่ [การตั้งค่าภาษา ](/admin/settings/languages) ของคุณ",
+          "zh-CN": "若要添加语言，请转到您的 [语言设置。](/admin/settings/languages)",
+          "zh-TW": "若要新增語言，請前往 [語言設定。](/admin/settings/languages)"
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "show_locale_selector",
+        "label": {
+          "da": "Vis sprogvælger",
+          "de": "Sprachauswahl anzeigen",
+          "en": "Show language selector",
+          "es": "Mostrar el selector de idioma",
+          "fi": "Näytä kielenvalitsin",
+          "fr": "Afficher le sélecteur de langue",
+          "hi": "मात्रा चयनकर्ता दिखाएं",
+          "it": "Mostra selettore lingua",
+          "ja": "言語セレクターを表示する",
+          "ko": "언어 선택기 표시",
+          "nb": "Vis språkvelger",
+          "nl": "Taalkiezer weergeven",
+          "pt-BR": "Mostrar seletor de idioma",
+          "pt-PT": "Mostrar seletor de idioma",
+          "sv": "Visa språkväljare",
+          "th": "แสดงตัวเลือกภาษา",
+          "zh-CN": "显示语言选择器",
+          "zh-TW": "顯示語言選擇器"
+        },
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": {
+          "da": "Valutavælger",
+          "de": "Währungsauswahl",
+          "en": "Currency Selector",
+          "es": "Selector de moneda",
+          "fi": "Valuutanvalitsin",
+          "fr": "Sélecteur de devise",
+          "hi": "मुद्रा चयनकर्ता",
+          "it": "Selettore di valuta",
+          "ja": "通貨セレクター",
+          "ko": "통화 선택기",
+          "nb": "Valutavelger",
+          "nl": "Valutakiezer",
+          "pt-BR": "Seletor de moeda",
+          "pt-PT": "Seletor de Moeda",
+          "sv": "Valutaväljare",
+          "th": "ตัวเลือกสกุลเงิน",
+          "zh-CN": "货币选择器",
+          "zh-TW": "幣別選擇器"
+        },
+        "info": {
+          "da": "Du kan tilføje en valuta ved at gå til dine [betalingsindstillinger.](/admin/settings/payments)",
+          "de": "Gehen Sie zu Ihren [Zahlungseinstellungen](/admin/settings/payments), um eine Währung hinzuzufügen.",
+          "en": "To add a currency, go to your [payment settings.](/admin/settings/payments)",
+          "es": "Para agregar una moneda, ve a tu [configuración de pago.](/admin/settings/payments)",
+          "fi": "Lisää valuutta siirtymällä [maksuasetuksiisi.](/admin/settings/payments)",
+          "fr": "Pour ajouter une devise, allez dans vos [paramètres de paiement.](/admin/settings/payments)",
+          "hi": "कोई मुद्रा जोड़ने के लिए, अपनी [payment settings.](/admin/settings/payments) में जाएं",
+          "it": "Per aggiungere una valuta, vai su [impostazioni pagamento.](/admin/settings/payments)",
+          "ja": "通貨を追加するには、[決済設定](/admin/settings/payments) に移動します。",
+          "ko": "통화를 추가하려면 [결제 설정](/admin/settings/payments)(으)로 이동하십시오.",
+          "nb": "For å legge til en valuta, går du til [betalingsinnstillingene.](/admin/settings/payments)",
+          "nl": "Ga naar je [betaalinstellingen.](/admin/settings/payments) om een valuta toe te voegen.",
+          "pt-BR": "Para adicionar uma moeda, acesse as [configurações de pagamento.](/admin/settings/payments)",
+          "pt-PT": "Para adicionar uma moeda, aceda às suas [definições de pagamento.](/admin/settings/payments)",
+          "sv": "Gå till [payment settings ](/admin/settings/payments) för att lägga till en valuta.",
+          "th": "หากต้องการเพิ่มสกุลเงิน ให้ไปที่ [การตั้งค่าการชำระเงิน ](/admin/settings/payments)",
+          "zh-CN": "若要添加货币，请转到 [支付设置。](/admin/settings/payments)",
+          "zh-TW": "若要新增幣別，請前往 [付款設定。](/admin/settings/payments)"
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "show_currency_selector",
+        "label": {
+          "da": "Vis valutavælger",
+          "de": "Währungsauswahl anzeigen",
+          "en": "Show currency selector",
+          "es": "Mostrar el selector de moneda",
+          "fi": "Näytä valuutanvalitsin",
+          "fr": "Afficher le sélecteur de devise",
+          "hi": "मुद्रा चयनकर्ता दिखाएं",
+          "it": "Mostra selettore valuta",
+          "ja": "通貨セレクターを表示する",
+          "ko": "통화 선택기 표시",
+          "nb": "Vis valutavelger",
+          "nl": "Valutakiezer weergeven",
+          "pt-BR": "Mostrar seletor de moeda",
+          "pt-PT": "Mostrar seletor de moeda",
+          "sv": "Visa valutaväljare",
+          "th": "แสดงตัวเลือกสกุลเงิน",
+          "zh-CN": "货币选择器显示",
+          "zh-TW": "顯示幣別選擇器"
+        },
+        "default": false
+      },
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo image"
+      },
+      {
+        "type": "range",
+        "id": "logo_max_size",
+        "min": 50,
+        "max": 300,
+        "step": 10,
+        "label": "Custom logo size",
+        "default": 150
+      },
+      {
+        "type": "link_list",
+        "id": "menu",
+        "label": "Main menu",
+        "default": "main-menu"
+      },
+      {
+        "type": "link_list",
+        "id": "right_menu",
+        "label": "Right menu"
+      },
+      {
+        "type": "header",
+        "content": "Transparent header"
+      },
+      {
+        "type": "checkbox",
+        "id": "transparent_index_header_enabled",
+        "label": "Enable on home page",
+        "default": false
+      },
+      {
+        "type": "image_picker",
+        "id": "transparent_logo",
+        "label": "Logo image"
+      },
+      {
+        "type": "color",
+        "id": "transparent_header_foreground_color",
+        "label": "Text color",
+        "info": "Only applicable if transparent header is enabled.",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "transparent_header_border_color",
+        "label": "Border color",
+        "info": "Only applicable if transparent header is enabled.",
+        "default": "#ffffff"
+      },
+      {
+        "type": "range",
+        "id": "transparent_header_border_opacity",
+        "min": 0,
+        "max": 100,
+        "step": 10,
+        "label": "Border opacity",
+        "default": 10
+      }
+    ],
+    "blocks": [
+      {
+        "type": "mega_nav",
+        "name": "Mega nav",
+        "settings": [
+          {
+            "type": "text",
+            "id": "dropdown_parent_link",
+            "label": "Dropdown parent link",
+            "info": "Name the link in the main menu that you'd like the Mega nav to appear from."
+          },
+          {
+            "type": "image_picker",
+            "id": "mega_nav_featured_image",
+            "label": "Mega nav featured image"
+          },
+          {
+            "type": "text",
+            "id": "featured_image_heading",
+            "label": "Featured image caption"
+          },
+          {
+            "type": "text",
+            "id": "featured_image_link_text",
+            "label": "Featured image link text"
+          },
+          {
+            "type": "url",
+            "id": "featured_image_link",
+            "label": "Featured image link"
+          },
+          {
+            "type": "richtext",
+            "id": "feature_text",
+            "label": "Strapline text",
+            "default": "<p>Mention a new sale, product line, or blog post here.&nbsp;<a href=\'\#\'>Don't forget to add a link &rarr;<\/a><\/p>"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+
+
+
+
+{% style %}
+
+  .drawer-wrapper{
+  
+   display: flex;
+    flex-wrap: wrap;
+    row-gap: 10px;
+    overflow: scroll;
+    height: auto;
+    padding:0 20px;
+    justify-content: space-between;;
+  }
+  .drawer-menu__item{
+    display:flex;
+   flex-direction:column-reverse;
+  }
+
+  /* .drawer-wrapper .drawer-menu__item >a{
+    display:none;
+  }
+
+  .menu-image .drawer-menu__link {
+    display:none;
+  } */
+.drawer-wrapper .drawer-menu__item{
+  max-width:48%;
+  /* height:100%; */
+  margin-bottom:auto;
+  
+}
+
+  .nav__item .menu-image{
+      width:100%;
+      max-width:380px;
+  }
+.nav__item .menu-image.mardi {
+   max-width:320px;
+}
+   .nav__item .menu-image img{
+     width:100%;
+   }
+
+.drawer-menu__item {
+  width:100%;
+  
+  
+}
+  
+ .drawer-menu__item .menu-image img{
+  width:100%;
+} 
+
+  .nav__submenu{
+    left:0;
+    width:100% !important;
+    display:flex;
+    flex-wrap:wrap;
+    
+  }
+
+  /* .nav__submenu .nav__item{
+    display:none;
+  } */
+
+  .nav__submenu .menu-image h4{
+    margin:0;
+  }
+
+  .nav__submenu .menu-image{
+    text-align:center;
+  }
+
+ 
+
+  .nav__item-parent:hover .nav__submenu{
+     display: flex !important;
+    justify-content: center;
+    gap: 40px;
+    row-gap:0;
+
+  }
+
+  /* .menu-image{
+    text-align:center;
+  } */
+
+
+  /* mobile review star section  */
+
+  .inner-block{
+    padding:8px 12px;
+    margin:10px 10px;
+    text-align:center;
+  }
+
+    .inner-block p{
+      margin:5px 0;
+font-family: Montserrat;
+font-weight: 500;
+line-height: 18px;
+letter-spacing: 0.02em;
+text-align: center;
+
+    }
+
+
+.nav .nav__item{
+  text-align:center !important;
+}
+    .nav__item.nav__item-for-humans,
+  .nav__item.nav__item-for-dogs{
+    display: block;
+    width: 100%;
+    margin-left: 11%;
+    text-align:left !important;
+    color: var(--brand-3, #13294B);
+font-family: Montserrat;
+font-size: 16px;
+font-style: normal;
+font-weight: 700;
+line-height: 24px; /* 150% */
+  }
+
+     .nav__item.nav__item-for-humans{
+       margin-top:20px;
+     }
+  .nav__item.nav__item-for-dogs{
+    text-align:left !important;
+  }
+
+.drop-container{
+        /* max-width: 80%; */
+    margin: 0 auto;
+    /* position: relative; */
+    /* transform: translateX(-50%); */
+    position: absolute;
+    /* width: 76%; */
+    /* left: 50%; */
+    top: 0;
+}
+
+  @media(max-width: 959px){
+      /* desktop menu none for mobile */
+     .header__content [data-primary-navigation="yes"]{
+    display:none !important;
+  }
+
+      .drawer-wrapper .drawer-menu__link{
+    padding-right:0;
+  }
+
+    .drawer-menu__link  span{
+      color: var(--brand-3, #13294B);
+font-family: Montserrat;
+font-size: 13px;
+font-style: normal;
+font-weight: 500;
+line-height: 20px; /* 142.857% */
+letter-spacing: -0.14px;
+    }
+
+    
+  }
+
+  
+.drawer-wrapper .header-item {
+  width:100%;
+  max-width:100%;
+  display:block;
+
+  
+}
+
+  .drawer-wrapper.header-item-wrapper{
+    height:70vh;
+    overflow: scroll;
+  }
+
+  .drawer-wrapper   .drawer-menu__link{
+    padding-left:0 !important;
+    height:auto;
+  }
+
+
+  .drop-container>.nav__submenu{
+    max-width: max-content;
+    margin: 0 auto;
+   
+  }
+
+  .drop-container{
+    /* border: 1px solid; */
+    position: absolute;
+    top: 60px;
+    width: 100%;
+    left: 0;
+    background:#fff;
+    padding:20px;
+    display:none;
+  }
+  .nav.nav--depth-1>li:hover   .drop-container{
+   display:block;
+  }
+  .nav .nav__submenu{
+    position:static !important;
+  }
+
+  /* .header-size-chart{
+    max-width:70% !important;
+  } */
+
+.drawer-menu__list .drawer-menu__link[data-item="back"] span{
+    color: var(--brand-2, #59BBE9);
+font-family: Montserrat;
+font-size: 16px;
+font-style: normal;
+font-weight: 700;
+line-height: 24px; /* 150% */
+  }
+
+
+
+  .drawer-menu__item--search .drawer-menu__link{
+    display:none;
+  }
+
+  .drawer-menu__search-input{
+    /* border: 1px solid var(--brand-6, #F1F1F1); */
+ background: var(--brand-5, #FFF);
+    border-radius:0;
+    /* outline:1px solid var(--brand-6, #F1F1F1); */
+  }
+
+  .drawer-menu__search-bar{
+    padding-top:0;
+    border: 1px solid var(--color-drawer-border);
+  }
+
+  .drawer-menu__all-links{
+    border-top:1px solid var(--color-drawer-border);
+  }
+  .drawer-menu__item--search{
+    padding:20px;
+  }
+
+  .drawer-menu__header{
+    padding-bottom:0;
+  }
+
+  .drawer-menu__search-close svg{
+    transform: rotate(180deg);
+    margin-right: 5px;
+  }
+
+
+
+  .drawer-menu__list{
+    width:100%;
+    max-width:100%;
+  }
+
+
+  .drawer-menu__search-bar .main{
+    margin-left:5px;
+  }
+  .drawer-menu__primary-links >.drawer-menu__item .header-item{
+    font-weight:700;
+  
+  }
+   /* .header-item-wrapper .header-item{
+       padding:10px 0;
+   } */
+
+  .nav__item-id-for-the-pup .menu-image img,
+  .nav__item-id-size-charts .menu-image img{
+    width:182px !important;
+  }
+  .drop-container .header-size-chart.nav__submenu{
+     max-width:1033px;  
+}
+
+  /* .drawer-menu__bottom{
+    overflow:hidden;
+  } */
+
+
+  .drawer-menu__all-links {
+    /* height:100%; */
+  }
+
+
+  /* new drawer css  */
+
+   .drawer-menu__primary-links[data-depth] {
+    transform: translate(0%) !important;
+}
+ .drawer-menu__primary-links[data-depth] > li > ul{
+    left: 0;
+    top: 35px;
+    background: #fff;
+    /* overflow-y: auto !important; */
+}
+ .drawer-menu__primary-links[data-depth] > li{
+    position: relative;
+}
+ .drawer-menu__contents > .drawer-menu__main{
+    height: 100% !important;
+    transition:none !important;
+    overflow:auto !important;
+}
+ .drawer-menu__primary-links[data-depth] > li.bm-showactive > a{
+    position:absolute;
+    top: 0;
+}
+ .drawer-menu__primary-links[data-depth] > li.bm-showactive > ul{
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+div.drawer-wrapper.header-item-wrapper{
+    height:100%;
+}
+
+.drawer-menu__item.drawer-menu__item--heading > button >svg{
+    display: none;
+}
+ .drawer-menu__primary-links[data-depth] > li.drawer-menu__item > a svg{
+    transform: rotate(90deg);
+}
+ .drawer-menu__primary-links[data-depth] > li.bm-showactive.drawer-menu__item > a svg{
+    transform: rotate(270deg);
+}
+
+   .drawer-menu .bm-showactive >a {   
+   padding-bottom:12px;
+  }
+
+ .drawer-menu .bm-showactive >a span{
+    color: var(--brand-2, #59BBE9);
+    font-family: Montserrat;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 24px;
+
+  }
+  
+  .drawer-menu__list--sub{
+   pointer-events: unset;
+  }
+
+   #header{
+    color:#000;
+box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.25);
+  }
+   .header__icon-wrapper button,
+  .mobile-nav .mobile-nav__trigger
+  {
+     color:#000 !important;
+   }
+  .header__icon-wrapper{
+      color:#000 !important;
+  }
+ 
+
+  {% endstyle %}
+
+  <script>
+     function live(selector, event, callback, context) {
+    /****Helper Functions****/
+    // helper for enabling IE 8 event bindings
+    function addEvent(el, type, handler) {
+      if (el.attachEvent) el.attachEvent('on' + type, handler);
+      else el.addEventListener(type, handler);
+    }
+    // live binding helper using matchesSelector
+    function live(selector, event, callback, context) {
+      addEvent(context || document, event, (e) => {
+        let found,
+          el = e.target || e.srcElement;
+        while (el && el.matches && el !== context && !(found = el.matches(selector))) el = el.parentElement;
+        if (found) callback.call(el, e);
+      });
+    }
+    live(selector, event, callback, context);
+  }
+
+    live('.drawer-menu__primary-links > li.menu-1-parent a', 'click', function(e){
+
+      $(this).parent().toggleClass('menu-arrow-up');
+
+      if($(this).parent().find('.drawer-menu__list-new').hasClass('has-grandchild')){
+        $(this).parent().find('.drawer-menu__list-new.has-grandchild').toggleClass('show-child');
+      } else{
+        $(this).parent().find('.drawer-menu__list-new').toggleClass('show-child');
+      }
+      
+      
+    });
+  </script>

@@ -1,0 +1,884 @@
+{% liquid
+  assign grid_modifiers = blank
+  assign modifiers = blank
+
+  assign modifiers = modifiers | append: ' collection--pagination-' | append: section.settings.pagination
+
+  if section.settings.show_border
+    assign modifiers = modifiers | append: ' collection--has-border'
+  endif
+
+  if section.settings.show_filters or section.settings.show_sort
+    assign modifiers = modifiers | append: ' collection--has-filters'
+  endif
+  
+  assign grid_modifiers = grid_modifiers | append: ' grid-display--one-quarter'
+  assign grid_modifiers = grid_modifiers | append: ' grid-display--has-products'
+  assign grid_modifiers = grid_modifiers | append: ' grid-display--' | append: section.settings.aspect_ratio
+
+  assign paginate_by = section.settings.per_page
+
+  assign collection_heading = collection.title
+  unless show_heading
+    assign collection_heading = blank
+  endunless
+
+  assign collection_label = blank
+  if show_small_heading
+    assign collection_label = 'collections.general.collection_label' | t
+  endif
+
+  assign paginated = false
+  if section.settings.pagination == 'paginated'
+    assign paginated = true
+  endif
+
+  assign filters_exist = false
+
+  unless collection.tags.size == 0 and section.settings.show_sort == false
+    assign filters_exist = true
+    if section.settings.filter_style == 'sidebar'
+      assign modifiers = modifiers | append: ' collection--has-sidebar'
+    endif
+  endunless
+
+  assign cat_string = blank
+  for tag in collection.all_tags
+    if tag contains '_'
+      assign category = tag | split: '_' | first
+      assign cat_string = cat_string | append: '|' | append: category
+    endif
+  endfor
+  assign categories = cat_string | remove_first: '|' | split: '|' | uniq
+
+  assign both_true = false
+  assign one_true = false
+
+  if section.settings.show_sort and section.settings.show_filters
+    assign both_true = true
+  elsif section.settings.show_sort or section.settings.show_filters
+    assign one_true = true
+  endif
+%}
+
+<section
+  class="collection{{ modifiers }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="collection"
+  data-pagination-type="{{ section.settings.pagination }}"
+  data-collection-item-count="{{ collection.all_products_count }}"
+>
+  <script type="application/json" data-tags>
+    {% if collection.all_tags.size > 0 %}
+      [
+        {%- for tag in collection.all_tags -%}
+          { "label": "{{ tag | escape }}", "handle": "{{ tag | handleize }}" }
+          {%- if forloop.last == false -%}, {%- endif -%}
+        {%- endfor -%}
+      ]
+    {% else %}
+      []
+    {% endif %}
+  </script>
+
+  {%- if collection.all_products_count > 0 -%}
+    {% paginate collection.products by paginate_by %}
+      <div class="collection__container">
+        <div class="collection__content">
+          {% if section.settings.show_sort or section.settings.show_filters %}
+            {%- if section.settings.filter_style == 'sidebar' -%}
+              <div class="collection__sidebar" data-sidebar>
+                <div class="collection-sidebar">
+                  {% if collection.all_tags.size > 0 and section.settings.show_filters %}
+                    {%- if section.settings.filter_type == 'by_tag' -%}
+                      <div class="collection-sidebar__group" data-group="{{ 'collections.tags.title' | t }}">
+                        {%- assign heading = 'collections.tags.title' | t -%}
+                        {% render 'collection-sidebar-heading' with heading: heading %}
+                        <ul>
+                          {% for tag in collection.all_tags %}
+                            {% assign is_in_category = false %}
+                            {% assign cat = tag | split: '_' | first %}
+                            {% unless cat == tag %}
+                              {% if categories contains cat %}
+                                {% assign is_in_category = true %}
+                              {% endif %}
+                            {% endunless %}
+
+                            {%- capture tag_text -%}
+  							  {% if is_in_category %}
+  							    {{ tag | remove_first: cat | remove_first: '_' }}
+							  {% else %}
+								{{ tag }}
+							  {% endif %}
+							{%- endcapture -%}
+
+                            {% if current_tags contains tag %}
+                              {% assign is_active = true %}
+                              {% assign url = tag_text | link_to_remove_tag: tag | split: '"' %}
+                              {% assign url = url[1] %}
+                            {% else %}
+                              {% assign is_active = false %}
+                              {% assign url = tag_text | link_to_add_tag: tag | split: '"' %}
+                              {% assign url = url[1] %}
+                            {% endif %}
+
+                            <li class="filter-item {% if is_active %}active{% endif %}">
+                              <a
+                                class="filter-item__content no-transition"
+                                href="{{ url }}"
+                                data-tag="{{ tag | handle }}"
+                              >
+                                <div class="filter-input__input filter-item__checkbox">
+                                  {% render 'icon-check' %}
+                                </div>
+
+                                <span class="filter-item__label type-body-regular">
+                                  {{ tag_text }}
+                                </span>
+                              </a>
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    {%- endif -%}
+
+                    {%- if section.settings.filter_type == 'by_group' -%}
+                      {% for category in categories %}
+                        {%- assign heading = category -%}
+                        <div class="collection-sidebar__group" data-group="{{ heading }}">
+                          {% render 'collection-sidebar-heading' with heading: heading %}
+                          <ul>
+                            {% for tag in collection.all_tags %}
+                              {% assign cat = tag | split: '_' | first %}
+
+                              {% if cat != tag and category == cat %}
+                                {% assign label = tag | remove_first: cat | remove_first: '_' %}
+
+                                {% if current_tags contains tag %}
+                                  {% assign is_active = true %}
+                                  {% assign url = label | link_to_remove_tag: tag | split: '"' %}
+                                  {% assign url = url[1] %}
+                                {% else %}
+                                  {% assign is_active = false %}
+                                  {% assign url = label | link_to_add_tag: tag | split: '"' %}
+                                  {% assign url = url[1] %}
+                                {% endif %}
+
+                                <li class="filter-item {% if is_active %}active{% endif %}">
+                                  <a
+                                    class="filter-item__content no-transition"
+                                    href="{{ url }}"
+                                    data-tag="{{ tag | handle }}"
+                                  >
+                                    <div class="filter-input__input filter-item__checkbox">
+                                      {% render 'icon-check' %}
+                                    </div>
+
+                                    <span class="filter-item__label type-body-regular">
+                                      {{ label }}
+                                    </span>
+                                  </a>
+                                </li>
+                              {% endif %}
+                            {% endfor %}
+                          </ul>
+                        </div>
+                      {% endfor %}
+                    {%- endif -%}
+                  {% endif %}
+
+                  {% if section.settings.show_sort %}
+                    {%- assign heading = 'collections.sorting.title' | t -%}
+                    <div class="collection-sidebar__group" data-group="{{ heading }}">
+                      {% render 'collection-sidebar-heading' with heading: heading %}
+                      <ul>
+                        {% for option in collection.sort_options %}
+                          {%- assign is_active = false -%}
+                          {%- if option.value == collection.sort_by -%}
+                            {%- assign is_active = true -%}
+                          {%- endif -%}
+
+                          <li class="filter-item {% if is_active %}active{% endif %}">
+                            <a
+                              class="filter-item__content no-transition"
+                              href="#"
+                              data-sort="{{ option.value | handle }}"
+                            >
+                              <div class="filter-input__input filter-item__radio">
+                                <div class="indicator"></div>
+                              </div>
+
+                              <span class="filter-item__label type-body-regular">
+                                {{ option.name }}
+                              </span>
+                            </a>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            {%- endif -%}
+          {% endif %}
+
+          {% if section.settings.filter_style == 'dropdown' %}
+            <div class="hidden-sort">
+              <div class="collection__sidebar" data-sidebar>
+                <div class="collection-sidebar">
+                  {%- assign heading = 'collections.sorting.title' | t -%}
+                  <div class="collection-sidebar__group" data-group="{{ heading }}">
+                    <ul class="sort--click">
+                      {% for option in collection.sort_options %}
+                        {%- assign is_active = false -%}
+                        {%- if option.value == collection.sort_by -%}
+                          {%- assign is_active = true -%}
+                        {%- endif -%}
+
+                        <li class="filter-item {% if is_active %}active{% endif %}">
+                          <a
+                            class="filter-item__content no-transition"
+                            href="#"
+                            data-sort="{{ option.value | handle }}"
+                          >
+                            <div class="filter-input__input filter-item__radio">
+                              <div class="indicator"></div>
+                            </div>
+
+                            <span class="filter-item__label type-body-regular">
+                              {{ option.name }}
+                            </span>
+                          </a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+          <div class="collection__main-area">
+            <div
+              class="new-collection-top-bar__heading-filter {% if both_true %}both_true{% endif %}{% if one_true %}one_true{% endif %}"
+            >
+              <div class="new-collection-top-bar__heading">
+                <h2
+                  class="text-block__heading type-heading-1 gh-heading ma0 {% if both_true %}both_true_padding{% endif %}{% if one_true %}one_true_padding{% endif %}"
+                  style="color:{{ section.settings.text_color }};"
+                >
+                  {{ collection.title }}
+                </h2>
+              </div>
+              <div class="new-collection-top-bar__filter">
+                {% if section.settings.show_filters or section.settings.show_sort %}
+                  {% if section.settings.filter_style == 'dropdown' %}
+                    <div class="new-collection-top-bar__filters {% if both_true %}both_true-filter{% endif %}">
+                      {% if collection.all_tags.size > 0 and section.settings.show_filters %}
+                        {% if section.settings.filter_type == 'by_group' %}
+                          {% for category in categories %}
+                            <a
+                              href="#"
+                              class="collection__button type-body-regular rounded-border-filter full-width_filter {% if both_true %}both_true-filter-padding{% endif %}"
+                              data-filter="{{ category }}"
+                              style="font-weight: bold"
+                            >
+                              {{ category }}
+                              {% render 'icon-chevron-down' %}
+                            </a>
+                          {% endfor %}
+                        {% endif %}
+
+                        {% if section.settings.filter_type == 'by_tag' %}
+                          <a
+                            href="#"
+                            class="collection__button type-body-regular rounded-border-filter full-width_filter {% if both_true %}both_true-filter-padding{% endif %}"
+                            data-filter="__tags"
+                            style="font-weight: bold"
+                          >
+                            {{ 'collections.tags.title' | t }}
+                            {% render 'icon-chevron-down' %}
+                          </a>
+                        {% endif %}
+                      {% endif %}
+
+                      {% if section.settings.show_sort %}
+                        {% assign sort_by = collection.sort_by | default: collection.default_sort_by %}
+                        {% assign valid_filters = 'best-selling,created-descending,price-ascending,price-descending' %}
+                        <script>
+                          console.log('>>>>')
+                          console.log('{{sort_by}} : {{valid_filters}}')
+                        </script>
+                        <div class="rounded-border-sort full-width_filter">
+                          <label for="sort-by" class="sort-by">Sort by:</label>
+                          <select id="sort-by" aria-labelledby="sort-by" aria-describedby="sort-instructions">
+                            
+                            {% for option in collection.sort_options %}
+                                <option
+                                  {% unless valid_filters contains option.value %}class="hidden"{% endunless %}
+                                  value="{{ option.value | handle }}"
+                                  {% if option.value == sort_by %}
+                                    selected
+                                  {% endif %}
+                                >
+                                  {% if option.value == 'created-descending' %}
+                                    New Arrivals
+                                  {% else %}
+                                    {{ option.name }}
+                                  {% endif %}
+                                </option>
+                            {% endfor %}
+                          </select>
+                          <div id="sort-instructions" class="sr-only">
+                            Use arrow keys to navigate options and Enter to select
+                          </div>
+                        </div>
+                      {% endif %}
+                    </div>
+                  {% else %}
+                    {%
+                      render 'collection-filters' with
+                      categories: categories,
+                      filter_type: section.settings.filter_type,
+                      show_sort: section.settings.show_sort,
+                      show_filters: section.settings.show_filters
+                    %}
+                  {% endif %}
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="collection__window">
+              <div class="collection__loading" data-loading>
+                {% render 'loader' %}
+              </div>
+
+              <div id="root" class="collection__products" data-partial>
+                <div class="collection__top-row">
+                  {% if current_tags.size > 0 or collection.sort_by != blank %}
+                    <div class="collection-top-bar">
+                      <div class="collection-top-bar__active-elements">
+                        {% for tag in current_tags %}
+                          {% assign label = tag %}
+                          {% assign cat = label | split: '_' | first %}
+
+                          {% unless cat == tag %}
+                            {% assign filter = label | split: '_' | last %}
+                            {% assign label = cat | append: ': ' | append: filter %}
+                          {% endunless %}
+
+                          {% assign url = label | link_to_remove_tag: tag | split: '"' %}
+                          {% assign url = url[1] %}
+
+                          <a href="{{ url }}" class="collection__tag" data-pill="filter" data-tag="{{ tag | handle }}">
+                            <span>{{ label }}</span>
+                            {% render 'icon-close' %}
+                          </a>
+                        {% endfor %}
+
+                        {%- if section.settings.filter_style == 'sidebar' -%}
+                          {%- if collection.sort_by != blank -%}
+                            {% for option in collection.sort_options %}
+                              {% if collection.sort_by == option.value %}
+                                {% assign label = option.name %}
+                              {% endif %}
+                            {% endfor %}
+                            <a href="#" class="collection__tag" data-sort-pill data-pill="sort">
+                              <span>{{ 'collections.sorting.sort' | t: label: label }}</span>
+                              {% render 'icon-close' %}
+                            </a>
+                          {%- endif -%}
+                        {%- endif -%}
+                      </div>
+                    </div>
+                  {% endif %}
+                </div>
+
+                <div class="grid-display w-100{{ grid_modifiers }} collection__infinite-container">
+                  {% for product in collection.products %}
+                    {% assign current_index = forloop.index %}
+                    {% for block in section.blocks %}
+                      {% if block.type == 'product_banner' %}
+                        {% if block.settings.product_banner_position == current_index and current_page == 1 %}
+                          <div class="product-item">
+                            <div class="product-banner-main product-item-{{ block.id }} mb3">
+                              <div class="product-banner">
+                                {% if block.settings.product_banner_image != blank%}
+                                <div class="product-banner-icon">
+                                  <img src="{{ block.settings.product_banner_image | img_url: '300x' }}" alt="{{ block.settings.product_banner_image.alt }}"/>
+                                </div>
+                                {% endif %}
+                                {% if block.settings.title != blank or  block.settings.product_banner_content != blank %}
+                                <div class="product-banner-content">
+                                  <div class="product-banner-title">{{ block.settings.title }}</div>
+                                  <div class="product-banner-subtitle">{{ block.settings.product_banner_content }}</div>
+                                </div>
+                                {% endif %}
+                              </div>
+                            </div>
+                          </div>
+                          <style>
+                            .product-item-{{ block.id }} {
+                              background: {{ block.settings.product_banner_bg_color }};
+                            }
+                          </style>
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+
+                    {%
+                      render 'product-item' with
+                      product: product,
+                      swatches_enabled: section.settings.show_swatches,
+                      aspect_ratio: section.settings.aspect_ratio
+                    %}
+                  {% else %}
+                    <div class="collection__empty">
+                      <div>{{ 'collections.general.no_products' | t }}</div>
+                      <a data-clear="true">{{ 'collections.filters.clear' | t }}</a>
+                    </div>
+                  {% endfor %}
+                </div>
+
+                {% unless paginated %}
+                  <div class="collection__infinite-trigger">
+                    {% if paginate.next %}
+                      <a
+                        href="{{ paginate.next.url }}"
+                        class="bttn bttn--secondary"
+                      >
+                        {{- 'general.pagination.load_more' | t -}}
+                      </a>
+                    {% endif %}
+                  </div>
+                {% endunless %}
+
+                {% if paginated %}
+                  <div class="mt3 w-100">
+                    {% if paginate.pages > 1 %}
+                      {%
+                        render 'pagination' with
+                        paginate: paginate,
+                        type: 'general.pagination.products'
+                      %}
+                    {% else %}
+                      {%
+                        render 'pagination' with
+                        paginate: paginate,
+                        type: 'general.pagination.products',
+                        display_paginate_item_count_only: true
+                      %}
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endpaginate %}
+
+    <div class="filter-sort__flyout">
+      {% capture footer_markup %}
+			<div class="collection-flyout__footer">
+				<button class="bttn bttn--secondary bttn--full"
+				        data-button="clear">{{ 'collections.general.clear' | t }}</button>
+				<button class="bttn bttn--primary bttn--full" data-button="apply">{{ 'collections.general.apply' | t }}</button>
+			</div>
+		{% endcapture %}
+
+      {% if collection.all_tags.size > 0 %}
+        {% if section.settings.filter_type == 'by_group' %}
+          {% for category in categories %}
+            <div class="collection-flyout drawer" data-filter-flyout="{{ category }}">
+              <div class="collection-flyout__heading">
+                <h4 class="type-heading-1-small mt0 mb0">{{ category }}</h4>
+                <a href="#" data-close-icon>
+                  {% render 'icon-close' %}
+                </a>
+              </div>
+              <div class="collection-flyout__content" data-scroll-lock-ignore>
+                <ul>
+                  {% for tag in collection.all_tags %}
+                    {% assign cat = tag | split: '_' | first %}
+
+                    {% if cat != tag and category == cat %}
+                      {% assign label = tag | remove_first: cat | remove_first: '_' %}
+
+                      {% if current_tags contains tag %}
+                        {% assign is_active = true %}
+                        {% assign url = label | link_to_remove_tag: tag | split: '"' %}
+                        {% assign url = url[1] %}
+                      {% else %}
+                        {% assign is_active = false %}
+                        {% assign url = label | link_to_add_tag: tag | split: '"' %}
+                        {% assign url = url[1] %}
+                      {% endif %}
+
+                      {%
+                        render 'filter-item' with
+                        type: 'checkbox',
+                        label: label,
+                        active: is_active,
+                        url: url,
+
+                        key: 'tag',
+                        val: tag
+                      %}
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+              </div>
+              {{ footer_markup }}
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        {% if section.settings.filter_type == 'by_tag' %}
+          <div class="collection-flyout drawer" data-filter-flyout="__tags">
+            <div class="collection-flyout__heading">
+              <h4 class="type-heading-1-small mt0 mb0">{{ 'collections.tags.title' | t }}</h4>
+              <a href="#" data-close-icon>
+                {% render 'icon-close' %}
+              </a>
+            </div>
+            <div class="collection-flyout__content" data-scroll-lock-ignore>
+              <ul>
+                {% for tag in collection.all_tags %}
+                  {% assign is_in_category = false %}
+                  {% assign cat = tag | split: '_' | first %}
+                  {% unless cat == tag %}
+                    {% if categories contains cat %}
+                      {% assign is_in_category = true %}
+                    {% endif %}
+                  {% endunless %}
+
+                  {%- capture tag_text -%}
+					{% if is_in_category %}
+					  {{ tag | remove_first: cat | remove_first: '_' }}
+					{% else %}
+					  {{ tag }}
+					{% endif %}
+				  {%- endcapture -%}
+
+                  {% if current_tags contains tag %}
+                    {% assign is_active = true %}
+                    {% assign url = tag_text | link_to_remove_tag: tag | split: '"' %}
+                    {% assign url = url[1] %}
+                  {% else %}
+                    {% assign is_active = false %}
+                    {% assign url = tag_text | link_to_add_tag: tag | split: '"' %}
+                    {% assign url = url[1] %}
+                  {% endif %}
+
+                  {%
+                    render 'filter-item' with
+                    type: 'checkbox',
+                    label: tag_text,
+                    active: is_active,
+                    url: url,
+
+                    key: 'tag',
+                    val: tag
+                  %}
+                {% endfor %}
+              </ul>
+            </div>
+            {{ footer_markup }}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% if section.settings.show_sort %}
+        <div class="collection-flyout drawer" data-filter-flyout="__sort">
+          <div class="collection-flyout__heading">
+            <h4 class="type-heading-1-small mt0 mb0">{{ 'collections.sorting.title' | t }}</h4>
+            <a href="#" data-close-icon>
+              {% render 'icon-close' %}
+            </a>
+          </div>
+          <div class="collection-flyout__content" data-scroll-lock-ignore>
+            <ul>
+              {% for option in collection.sort_options %}
+                {%- assign is_active = false -%}
+                {%- if option.value == collection.sort_by -%}
+                  {%- assign is_active = true -%}
+                {%- endif -%}
+                {%
+                  render 'filter-item' with
+                  label: option.name,
+                  type: 'radio',
+                  active: is_active,
+                  url: '#',
+
+                  key: 'sort',
+                  val: option.value
+                %}
+              {% endfor %}
+            </ul>
+          </div>
+          {{ footer_markup }}
+        </div>
+      {% endif %}
+
+      <div class="collection-flyout__wash" data-filter-wash></div>
+    </div>
+
+  {%- else -%}
+    <div class="collection__empty ta-c">
+      <p class="fs-body-base mb0">{{ 'collections.general.no_matches' | t }}</p>
+      <a
+        class="btn btn--text-link"
+        href="{{ routes.all_products_collection_url }}"
+      >
+        {{- 'cart.general.continue_shopping' | t -}}
+      </a>
+    </div>
+  {%- endif -%}
+</section>
+
+{% if section.settings.show_sort and section.settings.filter_style == 'dropdown' %}
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const selectElement = document.getElementById("sort-by");
+    const anchorElements = document.querySelectorAll(".sort--click .filter-item a");
+    const options = selectElement.options;
+    const defaultValue = "{{ collection.default_sort_by }}";
+  
+    // Function to extract collection handle from the URL
+    function extractCollectionHandleFromURL() {
+      const pathSegments = window.location.pathname.split('/');
+      return pathSegments[2];
+    }
+  
+    // Check if there is a saved sorting option in the URL for the current collection
+    let currentCollectionHandle = extractCollectionHandleFromURL();
+    const urlParams = new URLSearchParams(window.location.search);
+    const savedSortBy = urlParams.get("sort_by");
+  
+    selectElement.addEventListener("change", function() {
+      const selectedIndex = selectElement.selectedIndex;
+  
+      anchorElements.forEach(function(anchorElement) {
+        anchorElement.closest('li').classList.remove("active");
+      });
+  
+      anchorElements[selectedIndex].closest('li').classList.add("active");
+  
+      const clickEvent = new Event("click", {
+        bubbles: true,
+        cancelable: true
+      });
+      anchorElements[selectedIndex].dispatchEvent(clickEvent);
+    });
+  
+    // Set the sorting option from the URL parameters or default value
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].value === (savedSortBy || defaultValue)) {
+        options[i].selected = true;
+        options[i].dispatchEvent(new Event("change"));
+        break;
+      }
+    }
+  
+    // Check for changes in the URL (when user navigates to a different collection or any other page)
+    window.addEventListener("popstate", function() {
+      const newCollectionHandle = extractCollectionHandleFromURL();
+      if (currentCollectionHandle !== newCollectionHandle) {
+        const currentUrlWithoutSortParam = window.location.pathname;
+        window.history.replaceState({}, document.title, currentUrlWithoutSortParam);
+        selectElement.value = defaultValue;
+        selectElement.dispatchEvent(new Event("change"));
+        currentCollectionHandle = newCollectionHandle;
+      }
+    });
+  });
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Collection Template",
+  "class": "section-dynamic section-borderable gh-new-collection-template",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Collection heading"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_border",
+      "label": "Show border",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_heading",
+      "label": "Show heading",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Filtering"
+    },
+    {
+      "id": "show_sort",
+      "type": "checkbox",
+      "label": "Show sort options",
+      "default": true
+    },
+    {
+      "id": "show_filters",
+      "type": "checkbox",
+      "label": "Show filters",
+      "default": true
+    },
+    {
+      "id": "filter_type",
+      "type": "select",
+      "label": "Filter type",
+      "options": [
+        {
+          "label": "By group",
+          "value": "by_group"
+        },
+        {
+          "label": "By tag",
+          "value": "by_tag"
+        }
+      ],
+      "default": "by_tag"
+    },
+    {
+      "id": "filter_style",
+      "type": "select",
+      "label": "Filter style",
+      "options": [
+        {
+          "label": "Sidebar",
+          "value": "sidebar"
+        },
+        {
+          "label": "Dropdown",
+          "value": "dropdown"
+        }
+      ],
+      "default": "dropdown"
+    },
+    {
+      "type": "header",
+      "content": "Collection"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_swatches",
+      "label": "Show swatches",
+      "default": false
+    },
+    {
+      "type": "paragraph",
+      "content": "Add swatch image files to your store's [files area](/admin/settings/files). Make sure the file names match the names of your color variants. For example, a variant called Blue would need a file called 'blue.png'"
+    },
+    {
+      "id": "aspect_ratio",
+      "type": "select",
+      "label": "Image aspect ratio",
+      "options": [
+        {
+          "label": "Natural",
+          "value": "natural"
+        },
+        {
+          "label": "Square (1:1)",
+          "value": "square"
+        },
+        {
+          "label": "Landscape (3:2)",
+          "value": "landscape"
+        },
+        {
+          "label": "Portrait (2:3)",
+          "value": "portrait"
+        }
+      ],
+      "default": "natural"
+    },
+    {
+      "id": "per_page",
+      "type": "range",
+      "label": "Products per page",
+      "default": 25,
+      "min": 10,
+      "max": 35,
+      "step": 5
+    },
+    {
+      "type": "select",
+      "id": "pagination",
+      "label": "Pagination",
+      "default": "paginated",
+      "options": [
+        {
+          "value": "infinite",
+          "label": "Infinite"
+        },
+        {
+          "value": "click",
+          "label": "Click to load"
+        },
+        {
+          "value": "paginated",
+          "label": "Paginated"
+        }
+      ],
+      "info": "This setting determines how additional pages of products are navigated."
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Product info card",
+      "type": "product_banner",
+      "settings": [
+        {
+          "type": "color_background",
+          "id": "product_banner_bg_color",
+          "label": "Background color"
+        },
+        {
+          "type": "image_picker",
+          "id": "product_banner_image",
+          "label": "Icon"
+        },
+        {
+          "type": "richtext",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "product_banner_content",
+          "label": "Subtitle"
+        },
+        {
+          "type": "range",
+          "id": "product_banner_position",
+          "label": "Info position",
+          "min": 1,
+          "max": 35,
+          "default": 3
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,81 @@
+<style>
+  .free-shipping-container {
+    text-align: center;
+  }
+
+  .shipping-message {
+    font-size: 14px;
+    text-align: start;
+    margin: 0px;
+    margin-left: 20px;
+    font-weight: 500;
+  }
+
+  .progress-container {
+    position: relative;
+    background-color: #e0e0e0;
+    margin: 10px 20px;
+    height: 10px;
+    border-radius: 5px;
+  }
+
+  .progress-bar {
+    background-color: #d81f59;
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.3s ease;
+  }
+
+  .progress-threshold {
+    position: absolute;
+    top: -9px;
+    right: 0;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 14px;
+    color: #101010;
+  }
+  span#shipping-threshold {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+</style>
+
+{%- assign calculated_total_price = 0 -%}
+
+{%- for line_item in cart.items -%}
+  {%- if line_item.requires_shipping -%}
+    {%- assign calculated_total_price = calculated_total_price | plus: line_item.final_line_price -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign total_cart_discount = 0 -%}
+
+{%- for discount_application in cart.cart_level_discount_applications -%}
+  {%- assign total_cart_discount = total_cart_discount | plus: discount_application.total_allocated_amount -%}
+{%- endfor -%}
+
+{%- assign calculated_total_price = calculated_total_price | minus: total_cart_discount -%}
+{%- assign actual_shipping_threshold = settings.cart_free_shipping_threshold | times: 100.0 -%}
+{%- assign remaining_amount_shipping_treshold = actual_shipping_threshold | minus: calculated_total_price -%}
+
+<div class="free-shipping-container">
+  <p id="shipping-message" class="shipping-message">
+    You are {{ remaining_amount_shipping_treshold | money }} away from <strong>Free Shipping!</strong>
+  </p>
+  <div class="progress-container">
+    <div id="progress-bar" class="progress-bar" style="width: 0;"></div>
+    <div class="progress-threshold">
+      <div class="c-threshold-icon">
+        {% if shipping_threshold_percent >= 85 %}
+          {% render 'c-full-icon-gift' %}
+        {% else %}
+          {% render 'c-icon-gift' %}
+        {% endif %}
+      </div>
+      <div class="progress-icon" id="progress-icon">
+        <!-- SVG icon with default color -->
+      </div>
+    </div>
+  </div>
+</div>

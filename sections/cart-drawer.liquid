@@ -1,0 +1,202 @@
+<style>
+  .cart-product-wrapper {
+    overflow-y: auto;
+  }
+  .cart-product-wrapper .quick-cart__items {
+    overflow-y: revert;
+  }
+</style>
+
+<div class="drawer cart-flyout" data-cart-drawer>
+  <div class="cart-flyout__inner quick-cart" data-quick-cart>
+    <ul class="quick-cart__tabs">
+      <li>
+        <a class="js-tab-link-cart" href="#">{{ 'layout.cart.title' | t }}</a>
+      </li>
+      <li>
+        <a class="js-tab-link-recent hide" href="#">{{ 'general.products.recently_viewed' | t }}</a>
+      </li>
+      <li>
+        <a class="js-tab-link-quick-shop quick-cart__quick-shop-product" href="#">
+          {{- 'general.products.quick_cart' | t -}}
+        </a>
+      </li>
+      <li class="quick-cart__close js-close">
+        {% render 'icon-close' %}
+      </li>
+    </ul>
+
+    {%- if settings.cart_show_free_shipping_threshold -%}
+      {% comment %} {%- render 'c-free-shipping-bar' -%} {% endcomment %}
+      {%- render 'c-free-shipping-bar', background_color: section.settings.product_card_background -%}
+    {%- endif -%}
+
+    <div class="c-cart-compliment">
+      <div class="c-icon-lables">
+        <h3 id="compliment-text">{{ settings.wow_lable }}</h3>
+        {{ settings.wow_svg }}
+      </div>
+    </div>
+
+    <div class="cart-product-wrapper 1231231231231312">
+      <div class="quick-cart__items js-items">
+        <div class="abs fill">
+          <svg viewBox="0 0 100 86" class="loader abs fill mxa cg">
+            <use xlink:href="#logo"></use>
+          </svg>
+        </div>
+      </div>
+      {% render 'cart-upsell-products' %}
+    </div>
+
+    <footer class="quick-cart__footer js-footer">
+      <p class="mt0 quick-cart__discounts js-discounts">-</p>
+      <p class="ma0">
+        {{ settings.quick_cart_note | replace: '[subtotal]', "<span class='js-subtotal'>$-.--</span>" }}
+      </p>
+      <a
+        class="quick-cart__checkout-button bttn bttn-full no-ajax"
+        href="{{ routes.cart_url }}"
+      >
+        {{ 'layout.cart.go' | t }}
+      </a>
+      <div class="c-cart-subtotal">
+        <span class="h5">Total</span>
+        <span class="js-subtotal">{{ cart.total_price | money_with_currency }}</span>
+      </div>
+
+      <div class="c-footer-content">
+        <div class="c-cart-buttons">
+          {% if settings.show_checkout_button %}
+            <a href="/checkout" class="btn btn--primary" id="checkout-button">
+              <div class="c-checkout-btn">
+                {{ settings.checkout_svg -}}
+                {{- settings.checkout_button_label }}
+              </div>
+            </a>
+          {% endif %}
+        </div>
+        <div class="c-checkout-lables">
+          <div class="c-lables">
+            <h3>{{ settings.icon_lable }}</h3>
+            {{ settings.icon_svg }}
+          </div>
+          <div class="c-lables">
+            <h3>{{ settings.icon_lable2 }}</h3>
+            {{ settings.icon_svg2 }}
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // List of compliments
+    var compliments = [
+      '🐶 Wow! We know you (and your dog) will love this!',
+      '🥳 This order looks amazing, what a lucky dog!',
+      '🤩 Your dog is so lucky to have you as the owner!',
+      '🤯 This order is just... the best!',
+      "😎 That's gonna be one strong & healthy dog!",
+      '😍 You have amazing taste!',
+      "🤭 That's one lucky dog right there!",
+    ];
+
+    // Select a random compliment
+    var randomCompliment = compliments[Math.floor(Math.random() * compliments.length)];
+
+    // Display the random compliment in the h3 tag
+    document.getElementById('compliment-text').innerText = randomCompliment;
+
+    ///
+
+    // Get elements
+    {% if settings.cart_show_free_shipping_threshold %}
+      var progressBar = document.getElementById('progress-bar');
+      var shippingMessage = document.getElementById('shipping-message');
+      var shippingThreshold = 85; // Fixed shipping threshold
+    {% endif %}
+
+      var subtotalElement = document.querySelector('.js-subtotal');
+    var emptyCart = document.querySelector('.c-empty-cart-wrapper');
+    var recommendedProductsCart = document.querySelector('.c-recommended-product-section');
+    var complimentCart = document.querySelector(".c-cart-compliment");
+
+    console.log("subtotal elem", subtotalElement);
+
+    {% if settings.cart_show_free_shipping_threshold %}
+      function updateProgressBar() {
+        // Extract numeric value from subtotal
+        var subtotalText = subtotalElement.textContent || subtotalElement.innerText;
+        var calculatedTotalPrice = parseFloat(subtotalText.replace(/[^0-9.-]+/g, ''));
+        var progress;
+
+        if (calculatedTotalPrice >= shippingThreshold) {
+          progress = 100; // Set to 100% when threshold is hit
+          shippingMessage.innerHTML = '🎉 Congrats! You got <strong>Free Shipping!</strong>';
+        } else {
+          progress = (calculatedTotalPrice / shippingThreshold) * 85; // Cap progress at 85% of threshold
+          var remainingAmount = shippingThreshold - calculatedTotalPrice;
+          shippingMessage.innerHTML =
+            'You are ' + formatMoney(remainingAmount) + ' away from <strong>Free Shipping!</strong>';
+        }
+
+        // Update progress bar width
+        progressBar.style.width = progress + '%';
+      }
+    {% endif %}
+    
+
+    function showHideEmptyCart() {
+      var subtotalText = subtotalElement.textContent || subtotalElement.innerText;
+      var calculatedTotalPrice = parseFloat(subtotalText.replace(/[^0-9.-]+/g, ''));
+
+      console.log('calc price', calculatedTotalPrice);
+
+      if (calculatedTotalPrice == 0) {
+        console.log("price = 0");
+        emptyCart.style.display = 'block';
+        recommendedProductsCart.style.display = 'none';
+        complimentCart.style.display = 'none';
+      } else {
+        console.log("price != 0");
+        emptyCart.style.display = 'none';
+        recommendedProductsCart.style.display = 'block';
+        complimentCart.style.display = 'block';
+      }
+    }
+
+    function formatMoney(amount) {
+      // Format the amount as money
+      return amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    }
+    // Initial update
+    {% if settings.cart_show_free_shipping_threshold %}
+      updateProgressBar();
+    {% endif %}
+
+    showHideEmptyCart();
+
+    // Observe changes to the subtotal element
+    var observer = new MutationObserver(function () {
+      {% if settings.cart_show_free_shipping_threshold %}
+        updateProgressBar();
+      {% endif %}
+
+      showHideEmptyCart();
+    });
+
+    observer.observe(subtotalElement, { childList: true, subtree: true });
+
+    // Optional: Add event listener if subtotal updates via AJAX
+    document.addEventListener('cart:updated', function () {
+      {% if settings.cart_show_free_shipping_threshold %}
+        updateProgressBar();
+      {% endif %}
+
+      showHideEmptyCart();
+    });
+  });
+</script>

@@ -1,0 +1,114 @@
+{% render 'pages--product' with
+  show_thumbnails: section.settings.show_thumbnails,
+  thumbnail_position: section.settings.thumbnail_position,
+  thumbnail_size: section.settings.thumbnail_size,
+  enable_full_width: section.settings.enable_full_width,
+  show_vendor: section.settings.show_vendor,
+  show_swatches: section.settings.show_swatches,
+  show_quantity_input: section.settings.show_quantity_input,
+  show_share_buttons: section.settings.show_share_buttons,
+  enable_payment_button: section.settings.enable_payment_button,
+  enable_video_looping: section.settings.enable_video_looping,
+%}
+
+{% schema %}
+  {
+    "name": "Product pages",
+    "settings": [
+      {
+        "id": "enable_full_width",
+        "type": "checkbox",
+        "label": "Enable full width",
+        "info": "If enabled this page will span the entire width of the window",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_thumbnails",
+        "label": "Show image thumbnails",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "thumbnail_position",
+        "label": "Thumbnail position",
+        "default": "vertical",
+        "options": [
+          {
+            "value": "vertical",
+            "label": "Beside product image"
+          },
+          {
+            "value": "horizontal",
+            "label": "Below product image"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "thumbnail_size",
+        "label": "Thumbnail size",
+        "default": "large",
+        "options": [
+          {
+            "value": "small",
+            "label": "Small"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "large",
+            "label": "Large"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "label": "Show vendor",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_swatches",
+        "label": "Show swatches",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_share_buttons",
+        "label": "Show social sharing buttons"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_quantity_input",
+        "label": "Show quantity selector",
+        "info": "If quantity selector is hidden, quantities will default to 1.",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_payment_button",
+        "label": "Show dynamic checkout button",
+        "info": "Lets customers check out directly using a familiar payment method. [Learn more](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Media"
+      },
+      {
+        "type": "paragraph",
+        "content": "Learn more about [media types](https://help.shopify.com/en/manual/products/product-media)"
+      },
+      {
+        "id": "enable_video_looping",
+        "type": "checkbox",
+        "label": "Enable video looping",
+        "default": true
+      }
+    ]
+  }
+{% endschema %}
